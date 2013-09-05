@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    body.container.index-bg
+        .head.peekawoo-logo
+            .container
+                form(method='get', action='/subscribe2', id='subscribe')
+                    .index-form
+                        .index-form-container
+                            br
+                            h1.text-signin Sign In
+                            p.text-signin2 Meet local singles on the world's first online speed dating site
+                            br
+                            a.sb-facebook(href="/authfb")
+                            p.text-signin2 or
+                            a.sb-twitter(href="/authtw")
+                            br
+                            hr
+                            p.text-email Want to be the first to try out our app?
+
+                                input.email(type="text", name="inputBox", placeholder="Enter your email here") 
+                            button.subscribe-button(type='submit',name='submit')
