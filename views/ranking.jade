@@ -8,21 +8,23 @@ block content
         .ranking-container
             .ranking-selection-box
                 h1#selection-title Woos
-                p#selection-para People who likes you
+                p#selection-para People who likes you back
                 .hr2
-                .hr3
                 .ranking-selection-list
                     .ranking-left
                         - var i =0;
                         each sample in chatmate
                             .img-photo
-                                img.chat_photo(id=JSON.parse(sample).codename, src=JSON.parse(sample).photourl)
-                            p.chat-mate=JSON.parse(sample).codename
-                            a#fblinkicon(href="http://facebook.com/"+JSON.parse(sample).username)
-                            a#twlinkicon(href="http://twitter.com/"+JSON.parse(sample).username)
+                                img.chat_photo(id=sample.codename, src=sample.photourl)
+                            p.chat-mate=sample.codename
+                            if(sample.provider == 'facebook')
+                                a#fblinkicon(href="http://facebook.com/"+sample.username)
+                            else
+                                a#twlinkicon(href="http://twitter.com/"+sample.username)
                         - i++
                 .submit-part
-                    button#submit_rating(type='button') Go back and mingle some more!
+                    button#submit_rating(type='button').p.text-signin3 Go back and mingle some more!
+                    .hr3
                     p#btn-woos 
                     input(type="hidden",id="chatm8",value=chatmate)
                     input(type="hidden",id="chatm7",value=chatmate.length))
@@ -31,7 +33,7 @@ block content
                 form(method='get', action='/subscribe2', id='subscribe')
                     p.text-email2 Want to be the first to try out our app?
                     .container
-                        input.email(type="text", name="inputBox", placeholder="Enter your email here") 
+                        input.email(type="text2", name="inputBox", placeholder="Enter your email here") 
                     button.subscribe-button2(type='submit',name='submit')
                     a.text-skipfornow2(href='/login') skip for now
         script

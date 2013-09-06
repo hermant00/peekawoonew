@@ -1119,9 +1119,13 @@ textarea {
 }
 
 textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    background-color: #FFFFFF;
+   background-color: #FFFFFF;
     border: 1px solid #CCCCCC;
+    border-radius: 11px 11px 11px 11px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    font-family: arial,helvetica;
+    font-size: 21px;
+    font-style: normal;
     height: 32px;
     margin-left: -133px;
     margin-top: 12px;
@@ -6154,4 +6158,20 @@ a.badge:focus {
 
 .affix {
   position: fixed;
+}
+
+textarea, input[type="text2"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 11px 11px 11px 11px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    font-family: arial,helvetica;
+    font-size: 21px;
+    font-style: normal;
+    height: 32px;
+    margin-left: -133px;
+    margin-top: 12px;
+    text-align: left;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+    width: 296px;
 }

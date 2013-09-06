@@ -121,12 +121,13 @@ body.gender-page {
 .messagewindow {
     border: 1px solid transparent;
     font-family: helvetica;
-    height: 192px;
+    height: 226px;
     margin-left: 59px;
     margin-top: 110px;
     overflow-y: scroll;
     position: inherit;
-    width: 578px;
+    top: -32px;
+    width: 577px;
 }
 .messagewindow img.leftp {
     background-repeat: no-repeat;
@@ -150,7 +151,7 @@ body.gender-page {
 .me-chat {
   position: relative;
   background-color:#87cfe0;
-  margin: -50px 0 0 87px;
+  margin: -64px 0 0 87px;
   padding: 4px 17px 18px 18px;
   text-align:left;
   border-radius:10px 10px 10px 10px;
@@ -159,7 +160,8 @@ body.gender-page {
   -webkit-border-radius:10px;
   -webkit-box-shadow: 0px 0 3px rgba(0,0,0,0.25);
   -moz-box-shadow: 0px 0 3px rgba(0,0,0,0.25);
-  box-shadow: 0px 0 3px rgba(0,0,0,0.25); 
+  box-shadow: 0px 0 3px rgba(0,0,0,0.25);
+  z-index:999; 
 }
 .me-chat:after {
   position: absolute;
@@ -172,13 +174,14 @@ body.gender-page {
   width:0;
   position:absolute;
   bottom:5px;
-  left:-1em; 
-  z-index:999;
+  left:-1.28em;
+  border-right:transparent; 
+  z-index:899;
 }
 .you-chat {
   position: relative;
   background-color:#ed8453;
-  margin: -50px 0 0 116px;
+  margin: -46px 0 0 155px;
   padding: 10px;
   text-align:left;
   border-radius:10px 10px 10px 10px;
@@ -187,7 +190,8 @@ body.gender-page {
   -webkit-border-radius:10px;
   -webkit-box-shadow: 0px 0 3px rgba(0,0,0,0.25);
   -moz-box-shadow: 0px 0 3px rgba(0,0,0,0.25);
-  box-shadow: 0px 0 3px rgba(0,0,0,0.25); 
+  box-shadow: 0px 0 3px rgba(0,0,0,0.25);
+  z-index:899;
 }
 .you-chat:after {
   position: absolute;
@@ -200,8 +204,9 @@ body.gender-page {
   width:0;
   position:absolute;
   bottom:5px;
-  left:20.5em; 
-  z-index:999;
+  left:22.35em;
+  border-left:transparent; 
+  z-index:899;
 }
 .topic_per_room {
     display: block;
@@ -592,11 +597,11 @@ footer a, footer p {
 .ppimg {
     border-radius: 60px 60px 60px 60px;
     display: block;
-    height: 114px;
+    height: 126px;
     left: 0px;
     position: relative;
     top: 0px;
-    width: 114px;
+    width: 126px;
     float: left;
 }
 
@@ -705,23 +710,26 @@ footer a, footer p {
 }
 
 .ranking-container .ranking-selection-box .ranking-selection-list {
-    border: 1px solid transparent;
+    border: 0 solid #CCCCCC;
     display: block;
-    height: 156px;
+    height: 147px;
     margin: 0 auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
     position: relative;
-    top: -255px;
-    width: 529px;
+    top: -27px;
+    width: 536px;
 }
-.ranking-container .ranking-selection-box .ranking-selection-list .ranking-left{  
+.ranking-container .ranking-selection-box .ranking-selection-list .ranking-left {
     border: 0 solid #000000;
     display: block;
     height: auto;
-    left: 40px;
+    left: 169px;
     position: relative;
     top: 2px;
     width: 79%;
 }
+
 
 .ranking-container .ranking-selection-box .ranking-selection-list .ranking-left .chat-mate {
     border: 0 solid #000000;
@@ -729,7 +737,7 @@ footer a, footer p {
     float: left;
     font-family: helvetica;
     font-size: 20px;
-    margin: -11% 48px;
+    margin: 29px 41px;
     vertical-align: middle;
     width: 70px;
 }
@@ -737,10 +745,10 @@ footer a, footer p {
 .ranking-container .ranking-selection-box .ranking-selection-list .ranking-left .chat-mate {
     border: 0 solid #000000;
     color: #584F4F;
-    float: left;
+    float: inherit;
     font-family: helvetica;
     font-size: 20px;
-    margin: -11% 48px;
+    margin: -11% 65px;
     vertical-align: middle;
     width: 70px;
 }
@@ -819,13 +827,13 @@ footer a, footer p {
     width: 465px;
 }
 
-.ranking-container .ranking-selection-box .submit-part #submit_rating{
-    background: url("/img/hc-theme/instawoo-woos-btn.png") no-repeat scroll center center transparent;
+.ranking-container .ranking-selection-box .submit-part #submit_rating {
+    background: url("/img/hc-theme/instawoo-woos-btn.png") no-repeat scroll center center / 492px 65px transparent;
     border: 0 solid #000000;
     cursor: pointer;
     display: block;
     height: 80%;
-    margin: 0 auto;
+    margin: -29px auto;
     width: 100%;
 }
 
@@ -840,11 +848,13 @@ body.ranking-page {
     background-position: center center;
 }
 
-.ranking-container .ranking-selection-box .ranking-selection-list .ranking-left .img-photo {
+.ranking-selection-box .ranking-selection-list .ranking-left .img-photo {
     border: 4px solid #EA985B;
     border-radius: 50px 50px 50px 50px;
+    float: inherit;
     height: 60px;
-    margin: 5px 0 5px -31px;
+    left: 34%;
+    margin: 4px -18px;
     top: 2%;
     width: 60px;
 }
@@ -1051,22 +1061,25 @@ body.ranking-page {
 }
 
 #left-time {
-    border: 0 solid white;
+    border: 0 solid;
     float: right;
+    font-size: 16px;
+    font-weight: bold;
     height: 30px;
-    margin: 0 auto;
+    margin: 20px -2px;
     position: relative;
-    right: 38px;
+    right: 30px;
     width: 60px;
 }
+
 .colon_game {
     display: block;
     float: left;
     font-weight: bold;
     height: 10px;
-    left: 8px;
+    left: -4px;
     position: relative;
-    top: 16px;
+    top: -1px;
     width: 1px;
 }
 .chat-page .chat-container .chat-text .rate_widget .ratings_chick {
@@ -1113,6 +1126,7 @@ body.ranking-page {
     border-radius: 30px 30px 30px 30px;
     height: 49px;
     left: 8px;
+    margin:13px 4px;
     position: relative;
     width: 50px;
 }
@@ -1122,7 +1136,7 @@ body.ranking-page {
     border: 4px solid #EA985B;
     border-radius: 50px 50px 50px 50px;
     height: 49px;
-    margin: -4px -14px 10px 452px;
+    margin: -4px -14px 10px 486px;
     position: relative;
     top: 10px;
     width: 50px;
@@ -1220,25 +1234,26 @@ body.loading-page {
     background-image: url("/img/hc-theme/linkfb.png");
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: auto auto;
+    background-size: 32px 32px;
+    border: 0 solid blue;
     display: block;
-    height: 25px;
-    margin-left: 148px;
-    margin-top: -44px;
-    width: 27px;
+    height: 50px;
+    margin-left: 154px;
+    margin-top: 13px;
+    width: 50px;
 }
 
 #twlinkicon {
     background-image: url("/img/hc-theme/linktw.png");
-    background-position: -18px -17px;
+    background-position: center center;
     background-repeat: no-repeat;
-    background-size: auto auto;
+    background-size: 30px 30px;
     border: 0 solid blue;
     display: block;
-    height: 28px;
-    margin-left: 181px;
-    margin-top: -25.5px;
-    width: 25px;
+    height: 50px;
+    margin-left: 191px;
+    margin-top: -50px;
+    width: 49px;
 }
 
 .index-bg {
@@ -1315,12 +1330,11 @@ body.loading-page {
 }
 .text-signin3 {
     color: #FFFFFF;
-    font-family: times new roman;
-    font-size: 16px;
-    font-style: regular;
-    font-weight: normal;
-    text-align:center;
-    color:#584f4f;
+    font-family: arial,helvetica;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    text-align: center;
 }
 
 .error-bg {
@@ -1362,7 +1376,7 @@ body.loading-page {
 }
 
 .peekawoo-error-logo {
-    background-image: url("/img/hc-theme/error-logo.png");
+    background-image: url("/img/hc-theme/peekawoo-logo.png");
     background-position: center center;
     background-repeat: no-repeat;
     background-size: auto auto;
@@ -1419,6 +1433,15 @@ body.loading-page {
     margin-top: 21px;
     text-align: center;
 }
+.text-email2 {
+    border: 0 solid;
+    color: #584F4F;
+    font-family: helvetica;
+    font-size: 27.99px;
+    height: 41px;
+    margin-top: 68px;
+    text-align: center;
+}
 .text-skipfornow {
     color: #584F4F;
     display: block;
@@ -1431,6 +1454,29 @@ body.loading-page {
     top: -71px;
     width: 100%;
 }
+.text-skipfornow2 {
+    color: #584F4F;
+    display: block;
+    font-family: helvetica;
+    font-size: 20px;
+    height: 41px;
+    margin: 49px auto 0;
+    text-align: center;
+    text-decoration: underline;
+    width: 100%;
+}
+.text-skipfornow2 {
+    color: #584F4F;
+    display: block;
+    font-family: helvetica;
+    font-size: 17px;
+    height: 41px;
+    margin: -12px auto 0;
+    text-align: center;
+    text-decoration: underline;
+    width: 100%;
+}
+
 .subscribe-button {
     background-image: url("/img/hc-theme/subscribe-button.png");
     background-position: right center;
@@ -1440,6 +1486,17 @@ body.loading-page {
     border-radius: 8px 8px 8px 8px;
     height: 42px;
     margin: -19px 0 0 281px;
+    width: 135px;
+}
+.subscribe-button2 {
+    background-image: url("/img/hc-theme/subscribe-button.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    border: 0 solid;
+    border-radius: 8px 8px 8px 8px;
+    height: 42px;
+    margin: -62px 0 0 452px;
     width: 135px;
 }
 .loading-image {
@@ -1551,6 +1608,7 @@ body.loading-page {
     -moz-border-left-colors: none;
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
+    border-color: #808080;
     border-image: none;
     border-style: solid none;
     border-width: 1.25px 0;
@@ -1562,9 +1620,10 @@ body.loading-page {
     -moz-border-left-colors: none;
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
+    border-color: #808080;
     border-image: none;
-    border-style: solid none;
+    border-style: double none;
     border-width: 1.25px 0;
-    margin: 125px 87px;
+    margin: 42px -35px;
     width: 537px;
 }

@@ -87,6 +87,11 @@ app.get("/",function(req,res){
 app.get("/login",function(req,res){
 	res.render('login');
 });
+
+app.get("/error",function(req,res){
+	res.render('error');
+});
+
 app.get('/authfb',
   passport.authenticate('facebook'));
 
@@ -330,6 +335,9 @@ app.io.sockets.on('connection',function(socket){
 		var mate = req.data.mate;
 		console.log("====user value====");
 		console.log(user);
+		console.log("====remove msg====");
+		delete req.data.user.msg;
+		console.log(user);
 		console.log("====mate value====");
 		console.log(mate);
 		console.log("====remove if exist====");
@@ -342,6 +350,9 @@ app.io.sockets.on('connection',function(socket){
 		var user = req.data.user;
 		var mate = req.data.mate;
 		console.log("====user value====");
+		console.log(user);
+		console.log("====remove msg====");
+		delete req.data.user.msg;
 		console.log(user);
 		console.log("====mate value====");
 		console.log(mate);
@@ -360,6 +371,16 @@ app.io.sockets.on('connection',function(socket){
 
 	app.io.route('member', function(req) {
 		async.auto({
+			checkIfExist : function(callback){
+				var gender = JSON.parse(req.data);
+				var me = {};
+				me.id = gender.id;
+				me.username = gender.username;
+				me.gender = gender.gender;
+				me.photourl = gender.photourl;
+				me.provider = gender.provider;
+				client.sismember("visitor:"+me.gender,JSON.stringify(me),callback);
+			},
 			setMember : function(callback){
 				var user = JSON.parse(req.data);
 				var up = {};
@@ -384,33 +405,36 @@ app.io.sockets.on('connection',function(socket){
 			}
 		},function(err,result){
 			console.log(result);
-			//if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
-			//	if(!game_lock){
-			//		game_lock = true;
-			//		console.log("starting game in 3 sec");
-			//		setTimeout(function(){
-			//			start_game();
-			//		},60000);
-			//	}
-			//}
-			
-			//if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
+			if(result.checkIfExist == 0){
+				console.log("NOTHING");
+				console.log(result.checkIfExist);
+				console.log("xxXXxx IM NEW HERE xxXXxx");
+				newuser = true;
+			}
+			else{
+				console.log("xxXXxx IM ALREADY HERE BEFORE xxXXxx");
+				newuser = false;
+			}
 			//Change condition if male == female
-			if(result.getMaleVisitor.length == result.getFemaleVisitor.length){
-				cycle_game = Number((result.getMaleVisitor.length + result.getFemaleVisitor.length) /2) ;
-				if(cycle == cycle_game){
-					game_lock = true;
-				}
-				else{
-					cycle = cycle_game;
-					game_lock = false;
-				}
-				if(!game_lock){
-					game_lock = true;
-					console.log("starting game in 30 sec");
-					setTimeout(function(){
-						start_game();
-					},30000);
+			if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
+				//cycle_game = Number((result.getMaleVisitor.length + result.getFemaleVisitor.length) /2) ;
+				//if(cycle == cycle_game){
+				//	game_lock = true;
+				//}
+				//else{
+				//	cycle = cycle_game;
+				//	game_lock = false;
+				//}
+				console.log("xxXXxx NEWUSER Reuslt xxXXxx");
+				console.log(newuser);
+				if(newuser){
+					if(!game_lock){
+						game_lock = true;
+						console.log("starting game in 30 sec");
+						setTimeout(function(){
+							start_game();
+						},30000);
+					}
 				}
 			}
 			

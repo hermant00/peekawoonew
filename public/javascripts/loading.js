@@ -15,3 +15,6 @@ socket.on(user.id,function(data){
 socket.on('game_stop',function(){
 	window.location = '/loading';
 });
+setTimeout(function(){
+	window.location = '/error';
+},70000);
