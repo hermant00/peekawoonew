@@ -89,6 +89,16 @@ app.get("/login",function(req,res){
 });
 
 app.get("/error",function(req,res){
+	var removeme = req.user;
+	console.log(removeme);
+	var again = {};
+	again.id = removeme.id;
+	again.username = removeme.username;
+	again.gender = removeme.gender;
+	again.photourl = removeme.photourl;
+	again.provider = removeme.provider;
+	console.log(again);
+	client.srem("visitor:"+removeme.gender,JSON.stringify(again));
 	res.render('error');
 });
 
@@ -370,6 +380,7 @@ app.io.sockets.on('connection',function(socket){
 	});
 
 	app.io.route('member', function(req) {
+		console.log(req);
 		async.auto({
 			checkIfExist : function(callback){
 				var gender = JSON.parse(req.data);

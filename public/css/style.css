@@ -1239,7 +1239,7 @@ body.loading-page {
     display: block;
     height: 50px;
     margin-left: 154px;
-    margin-top: 13px;
+    margin-top: 10px;
     width: 50px;
 }
 
@@ -1247,13 +1247,13 @@ body.loading-page {
     background-image: url("/img/hc-theme/linktw.png");
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 30px 30px;
+    background-size: 32px 32px;
     border: 0 solid blue;
     display: block;
     height: 50px;
-    margin-left: 191px;
-    margin-top: -50px;
-    width: 49px;
+    margin-left: 154px;
+    margin-top: 10px;
+    width: 50px;
 }
 
 .index-bg {
@@ -1496,7 +1496,7 @@ body.loading-page {
     border: 0 solid;
     border-radius: 8px 8px 8px 8px;
     height: 42px;
-    margin: -62px 0 0 452px;
+    margin: -65px 0 0 452px;
     width: 135px;
 }
 .loading-image {

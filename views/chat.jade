@@ -52,3 +52,15 @@ block content
         }
  
         var countdownTimer = setInterval('secondPassed()', 1000);
+        $('.ratings_chick').click(
+            function(){
+                if($(this).is('.ratings_chick')){
+                    $(this).prevAll().andSelf().removeClass('ratings_chick');
+                    $(this).prevAll().andSelf().addClass('ratings_chick-sel');
+                }
+                else{
+                    $(this).prevAll().andSelf().removeClass('ratings_chick-sel');
+                    $(this).prevAll().andSelf().addClass('ratings_chick');
+                }
+            }
+        );
