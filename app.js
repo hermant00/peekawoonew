@@ -190,14 +190,31 @@ app.get('/loading',function(req,res){
 });
 
 app.get('/ranking',function(req,res){
+	//var user = req.user;
+	//client.smembers('visitor:'+user.id,function(err,datas){
+	//	console.log("+++++Data Content Query+++++");
+	//	console.log(datas);
+	//	var likes = new Array();
+	//	datas.forEach(function(data){
+	//		likes.push(JSON.parse(data));
+	//	});
+	//	var up = {};
+	//	up.id = user.id;
+	//	up.username = user.username;
+	//	up.gender = user.gender;
+	//	up.photourl = user.photourl;
+	//	up.provider = user.provider;
+	//	up.codename = user.codename;
+	//	console.log("+++++UP content+++++");
+	//	console.log(up);
+	//	res.render('ranking',{user:up,chatmate:likes});
+	//});
 	var user = req.user;
-	client.smembers('visitor:'+user.id,function(err,datas){
-		console.log("+++++Data Content Query+++++");
-		console.log(datas);
-		var likes = new Array();
-		datas.forEach(function(data){
-			likes.push(JSON.parse(data));
-		});
+	console.log(req.user);
+	var likes = new Array();
+	var finalLikes = new Array();
+
+	var finishedRequest = function(){
 		var up = {};
 		up.id = user.id;
 		up.username = user.username;
@@ -207,7 +224,55 @@ app.get('/ranking',function(req,res){
 		up.codename = user.codename;
 		console.log("+++++UP content+++++");
 		console.log(up);
-		res.render('ranking',{user:up,chatmate:likes});
+		console.log("+++++UP content+++++");
+		console.log(finalLikes);
+		res.render('ranking',{user:up,chatmate:finalLikes});
+	}
+	
+	client.smembers('visitor:'+user.id,function(err,datas){
+		console.log("+++++Data Content Query+++++");
+		console.log(datas);
+		console.log(datas.length);
+		var countData;
+		countData = datas.length;
+		console.log("xxXXxx Count Content Value xxXXxx");
+		console.log(countData);
+		if(countData > 0){
+			datas.forEach(function(data){
+				console.log("xxXXxx PEOPLE WHO LIKE YOU");
+				console.log(data);
+				//countData = data.length;
+				//console.log(countData);
+				likes.push(data);
+				client.smembers('visitor:'+JSON.parse(data).id,function(err,liked){
+					if(!liked[0]){
+						console.log("xxXXxx NO ONE LIKE YOU xxXXxx");
+						liked = {};
+					}
+					else{
+						console.log("xxXXxx OTHER PEOPLE LIKE DATA xxXXxx");
+						console.log(liked);
+						liked.forEach(function(like){
+							console.log("xxXXxx LIKE DATA xxXXxx");
+							console.log(like);
+							if(JSON.parse(like).id == req.user.id){
+								console.log("xxXXxx RESULT OF LIKE xxXXxx");
+								finalLikes.push(datas);
+							}
+						});
+					} 
+					countData-=1;
+					if(countData <= 0){
+						finishedRequest();
+					}
+				});
+				
+	
+			});
+		}else{
+			finishedRequest();
+		}
+			
 	});
 });
 
