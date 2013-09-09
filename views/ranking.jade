@@ -30,12 +30,13 @@ block content
                     input(type="hidden",id="chatm7",value=chatmate.length))
                     input(type="hidden",id="chatm6",value=user)
                     input(type="hidden",id="user1",value=user.provider)
-                form(method='get', action='/subscribe2', id='subscribe')
+                form.form-ranking(method='get', action='/subscribe2', id='subscribe2')
                     p.text-email2 Want to be the first to try out our app?
                     .container
-                        input.email2(type="email2", name="inputBox", placeholder="Enter your email here", required='required') 
-                    button.subscribe-button2(type='submit',name='submit')
+                        input.email.ranking-email(type="email", name="inputBox", placeholder="Enter your email here", required='required')
+                    button.subscribe-button2(type='submit',name='input.email')     
                     a.text-skipfornow2(href='/login') skip for now
+                    a For your feedback Email: mara@peekawoo.com
         script
             $('#submit_rating').click(function(){
                 var userme = $('#user1').val();

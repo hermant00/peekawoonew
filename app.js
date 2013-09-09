@@ -14,7 +14,8 @@ var express = require('express.io')
   , cookieParser = require('connect').utils.parseSignedCookies
   , cookie = require("cookie")
   , async = require("async")
-  , config = require('./config.json');
+  , config = require('./config.json')
+  , fs = require('fs');
 
 var client = exports.client = redis.createClient();
 var sessionStore = new RedisStore({client : client});
@@ -23,11 +24,34 @@ var cycle = 0;
 var rotationGame = 0;
 var cycle_turn = false;
 var app = express();
-var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
+//var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
+var topic;
+var listTopic = new Array();
 app.http().io();
+
+var temp = 0;
+var fs = require('fs');
+fs.readFile('topics.txt', function(err, data) {
+    if(err) throw err;
+    var array = data.toString().split("\n");
+    temp = array.length;
+    for(i in array) {
+        console.log(array[i]);
+        listTopic.push(array[i].replace("\r",""));
+        temp -= 1;
+        if(temp <= 0){
+        	displayOutput();
+        }
+    }
+});
+
+function displayOutput(){
+	console.log("TOPICS LIST:");
+	topic = listTopic;
+	console.log(topic);
+}
+
 // all environments
-
-
 
 app.configure(function(){
 	app.set('views', __dirname + '/views');

@@ -450,8 +450,8 @@ form {
     display: block;
     float: left;
     font-family: helvetica;
-    font-size: 24px;
-    height: 21px;
+    font-size: 21px;
+    height: 26px;
     margin: 0 -19%;
     position: relative;
     text-align: left;
@@ -1265,21 +1265,21 @@ body.loading-page {
 }
 
 .peekawoo-logo {
-    background-image: url("/img/hc-theme/peekawoo-logo.png");
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: auto auto;
     height: 158px;
 }
 .peekawoo-logo2 {
-    background-image: url("/img/hc-theme/peekawoo-logo.png");
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 238px 72px;
     height: 70px;
 }
 .peekawoo-logo3 {
-    background-image: url("/img/hc-theme/peekawoo-logo.png");
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 195px auto;
@@ -1296,7 +1296,7 @@ body.loading-page {
     border: 0 solid;
     display: block;
     height: 414px;
-    margin-top: -54px;
+    margin-top: -69px;
     opacity: 0.67;
 }
 .index-form-container {
@@ -1305,9 +1305,9 @@ body.loading-page {
     display: block;
     height: 296px;
     left: 44px;
-    margin-left: 284px;
-    margin-top: 218px;
-    top: -42px;
+    margin-left: 230px;
+    margin-top: 225px;
+    top: -54px;
     width: 373px;
 }
 .text-signin {
@@ -1376,7 +1376,7 @@ body.loading-page {
 }
 
 .peekawoo-error-logo {
-    background-image: url("/img/hc-theme/peekawoo-logo.png");
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
     background-position: center center;
     background-repeat: no-repeat;
     background-size: auto auto;
@@ -1429,8 +1429,8 @@ body.loading-page {
     color: #584F4F;
     font-family: helvetica;
     font-size: 21.99px;
-    height: 41px;
-    margin-top: 21px;
+    height: 53px;
+    margin-top: 16px;
     text-align: center;
 }
 .text-email2 {
@@ -1442,6 +1442,7 @@ body.loading-page {
     margin-top: 68px;
     text-align: center;
 }
+
 .text-skipfornow {
     color: #584F4F;
     display: block;
@@ -1458,20 +1459,9 @@ body.loading-page {
     color: #584F4F;
     display: block;
     font-family: helvetica;
-    font-size: 20px;
-    height: 41px;
-    margin: 49px auto 0;
-    text-align: center;
-    text-decoration: underline;
-    width: 100%;
-}
-.text-skipfornow2 {
-    color: #584F4F;
-    display: block;
-    font-family: helvetica;
     font-size: 17px;
     height: 41px;
-    margin: -12px auto 0;
+    margin: -18px auto 0;
     text-align: center;
     text-decoration: underline;
     width: 100%;
@@ -1485,7 +1475,7 @@ body.loading-page {
     border: 0 solid;
     border-radius: 8px 8px 8px 8px;
     height: 42px;
-    margin: -19px 0 0 281px;
+    margin: -34px 0 0 281px;
     width: 135px;
 }
 .subscribe-button2 {
@@ -1496,7 +1486,7 @@ body.loading-page {
     border: 0 solid;
     border-radius: 8px 8px 8px 8px;
     height: 42px;
-    margin: -65px 0 0 452px;
+    margin: -85px 0 0 330px;
     width: 135px;
 }
 .loading-image {
@@ -1627,3 +1617,63 @@ body.loading-page {
     margin: 42px -35px;
     width: 537px;
 }
+select, textarea, input[type="email.text-email3"],.uneditable-input {
+border: 1px solid gray;
+border-radius: 8px 8px 8px 8px;
+color: #808080;
+display: inline-block;
+font-family: arial,helvetica;
+font-size: 20px;
+font-style: normal;
+height: 30px;
+line-height: 20px;
+margin-bottom: 10px;
+margin-left: -146px;
+margin-top: -14px;
+padding: 4px 6px;
+vertical-align: middle;
+width: 295px;
+margin-left: 130px;
+}
+
+.form-ranking {
+	display: block;
+	margin: 0px;
+}
+
+.form-login {
+    display: block;
+    margin: 50px;
+}
+
+.hr-line {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #EEEEEE -moz-use-text-color #FFFFFF;
+    border-image: none;
+    border-left: 0 none;
+    border-right: 0 none;
+    border-style: solid none;
+    border: 1px solid;
+    margin: -2px -37px 23px;
+    width: 457px;
+}
+input[type="email"] {
+
+    margin-left: -132px;
+    margin-top: 16px;
+
+}
+.container {
+    text-align: center;
+}
+
+
+input.ranking-email[type="email"] {
+    border-radius: 8px 8px 8px 8px;
+    margin-left: -376px;
+    margin-top: -16px;
+    width: 314px;
+}    
