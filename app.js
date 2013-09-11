@@ -14,8 +14,7 @@ var express = require('express.io')
   , cookieParser = require('connect').utils.parseSignedCookies
   , cookie = require("cookie")
   , async = require("async")
-  , config = require('./config.json')
-  , fs = require('fs');
+  , config = require('./config.json');
 
 var client = exports.client = redis.createClient();
 var sessionStore = new RedisStore({client : client});
@@ -24,10 +23,11 @@ var cycle = 0;
 var rotationGame = 0;
 var cycle_turn = false;
 var app = express();
+var newuser = false;
 //var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
+app.http().io();
 var topic;
 var listTopic = new Array();
-app.http().io();
 
 var temp = 0;
 var fs = require('fs');
@@ -105,11 +105,11 @@ passport.use(new TwitterStrategy(config.tw,
 ));
 
 app.get("/",function(req,res){
-	res.render('login');
+	res.render('start');
 });
 
 app.get("/login",function(req,res){
-	res.render('login');
+	res.render('start');
 });
 
 app.get("/error",function(req,res){
@@ -167,40 +167,36 @@ app.get('/loading',function(req,res){
 	console.log(req.query["gender-m"]);
 	console.log("XXX---------------- req.query gender - f -----------------XXX");
 	console.log(req.query["gender-f"]);
+	console.log("xxXX checking if req.data exist XXxx");
+	console.log(req.data);
 	//if(!req.query["gender-m"] && !req.query["gender-f"])
 	var genderStore = new Array();
 	if(req.user.provider == 'facebook'){
-		if(rotationGame === 0){
-			console.log("XXX---------------- FACEBOOK GENDER DEFAULT -----------------XXX");
-			req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
-		}
-		else{
-			console.log("XXX---------------- FACEBOOK GENDER AUTOMATIC -----------------XXX");
-			client.smembers("visitor:"+req.user.gender,function(err,datas){
-				datas.forEach(function(data){
-					if(req.user.id == JSON.parse(data).id){
-						genderStore.push(JSON.parse(data).gender);
-					}
-				});
-			});
-		}	
+		console.log("XXX---------------- FACEBOOK GENDER DEFAULT -----------------XXX");
+		req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
 	}else{
-		if(rotationGame === 0){
+		if(rotationGame == 0){
 			console.log("XXX---------------- TWITTER GENDER DEFAULT -----------------XXX");
 			req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
 		}
 		else{
 			console.log("XXX---------------- TWITTER GENDER AUTOMATIC -----------------XXX");
+			//req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
 			client.smembers("visitor:"+req.user.gender,function(err,datas){
 				datas.forEach(function(data){
 					if(req.user.id == JSON.parse(data).id){
 						genderStore.push(JSON.parse(data).gender);
 					}
 				});
-				if(!genderStore){
-					req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
-				}
 			});
+			if(genderStore.length > 0){
+				console.log("++ condition in gender selection ++");
+				req.user.gender = genderStore[0];
+			}
+			else{
+				console.log("++ condition in gender selection used old method ++");
+				req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
+			}
 		}
 	}
 
@@ -360,17 +356,47 @@ app.io.set('authorization', function (handshakeData, callback) {
 	if(handshakeData.headers.cookie){
 	//	console.log(handshakeData.headers.cookie);
 	//	var cookies = cookieParser(cookie.parse(handshakeData.headers.cookie), "peekawoo"),
+		console.log("xxXX Cookie XXxx");
 		console.log(handshakeData.headers.cookie);
 		var cookies = handshakeData.headers.cookie.replace("'","").split(";");
-		if(cookies.length > 1){
-			cookies = cookies[1].split("=");
+		console.log("declaration");
+		console.log(cookies);
+		console.log("checking cookies");
+		console.log(cookies.length);
+		for(var i = 0; i<cookies.length; i++){
+			var checkMe = cookies[i].search("peekawoo");
+			console.log(checkMe);
+			if(checkMe >= 0){
+				console.log("i'm at Array number "+i+" location "+checkMe);
+				var sampleMe = cookies[i].split("=");
+				if(sampleMe.length > 1){
+					console.log("goes greater");
+					sampleMe = sampleMe[1].split("=");
+				}
+				else{
+					console.log("goes lessthan");
+					sampleMe = sampleMe[0].split("=");
+				}
+				break;
+			}
 		}
-		else{
-			cookies = cookies[0].split("=");
-		}
-		sid = cookies[1].replace("s%3A","").split(".")[0];
-	//	sid = cookies["peekawoo"];
-
+		//if(cookies.length > 1){
+		//	console.log("goes greater");
+		//	cookies = cookies[1].split("=");
+		//}
+		//else{
+		//	console.log("goes lessthan");
+		//	cookies = cookies[0].split("=");
+		//}
+		console.log("here is the perfect result");
+		console.log(sampleMe);
+		//console.log("after");
+		//console.log(cookies);
+		sid = sampleMe[0].replace("s%3A","").split(".")[0];
+		//sid = cookies[1].replace("s%3A","").split(".")[0];
+		console.log("checking cookies");
+		console.log(sid);
+		console.log(sampleMe);
 		sessionStore.load(sid, function(err,session){
 			if(err || !session){
 				return callback("Error retrieving session!",false);
@@ -378,8 +404,10 @@ app.io.set('authorization', function (handshakeData, callback) {
 			handshakeData.peekawoo = {
 					user : session.passport.user
 			};
+			console.log("===== Connecting . . . =====");
 			return callback(null,true);
 		});
+		console.log("it just end here");
 	}
 	else{
 		return callback("No cookie transmitted.!",false);
@@ -469,9 +497,9 @@ app.io.sockets.on('connection',function(socket){
 	});
 
 	app.io.route('member', function(req) {
-		console.log(req);
 		async.auto({
 			checkIfExist : function(callback){
+				console.log("checking if goes in here");
 				var gender = JSON.parse(req.data);
 				var me = {};
 				me.id = gender.id;
@@ -482,6 +510,7 @@ app.io.sockets.on('connection',function(socket){
 				client.sismember("visitor:"+me.gender,JSON.stringify(me),callback);
 			},
 			setMember : function(callback){
+				console.log("checking if goes in here");
 				var user = JSON.parse(req.data);
 				var up = {};
 				up.id = user.id;
@@ -525,7 +554,7 @@ app.io.sockets.on('connection',function(socket){
 				//	cycle = cycle_game;
 				//	game_lock = false;
 				//}
-				console.log("xxXXxx NEWUSER Reuslt xxXXxx");
+				console.log("xxXXxx NEWUSER Result xxXXxx");
 				console.log(newuser);
 				if(newuser){
 					if(!game_lock){
@@ -533,11 +562,10 @@ app.io.sockets.on('connection',function(socket){
 						console.log("starting game in 30 sec");
 						setTimeout(function(){
 							start_game();
-						},30000);
+						},60000);
 					}
 				}
 			}
-			
 		});
 	});
 });
