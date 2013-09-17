@@ -26,6 +26,7 @@ var app = express();
 var newuser = false;
 //var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
 app.http().io();
+var countDownBoolean = true;
 var topic;
 var listTopic = new Array();
 
@@ -51,8 +52,81 @@ function displayOutput(){
 	console.log(topic);
 }
 
-// all environments
+var currentTimeCount = new Date().getTime();
+console.log(currentTimeCount);
+var setTimeCount = new Date();
+setTimeCount.setHours(20);
+console.log(setTimeCount);
+var computeSample = Math.abs(setTimeCount - currentTimeCount);
+console.log(computeSample);
+if(computeSample >= 0){
+	var secVal = computeSample;
+	console.log(Number(secVal));
+	secVal1 = Math.ceil((secVal/1000)-1);
+	console.log(Number(secVal1));
+}else{
+	secVal1 = 0;
+}
 
+var myCounter = new Countdown({
+	seconds: 71000,
+    onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+    onCounterEnd: function(){ console.log('counter ended!');
+    	console.log("xxXXxx I'm here to Login xxXXxx");
+    	countDownBoolean = false;
+    	newCounter.start();
+    }
+});
+myCounter.start();
+var newCounter = new Countdown({
+	seconds:15500,
+	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+    onCounterEnd: function(){ console.log('counter ended!');
+    console.log("xxXXxx I'm here to CountDown xxXXxx");
+    	countDownBoolean = true;
+    	alterCounter.start();
+    }
+});
+
+var alterCounter = new Countdown({
+	seconds:70000,
+	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+    onCounterEnd: function(){ console.log('counter alter!');
+    console.log("xxXXxx I'm here to CountDown xxXXxx");
+    	countDownBoolean = false;
+    	newCounter.start();
+    }
+});
+
+function Countdown(options) {
+    var timer,
+    instance = this,
+    seconds = options.seconds,
+    updateStatus = options.onUpdateStatus || function () {},
+    counterEnd = options.onCounterEnd || function () {};
+
+    function decrementCounter() {
+        updateStatus(seconds);
+        if (seconds === 0) {
+            counterEnd();
+            instance.stop();
+        }
+        seconds--;
+    }
+
+    this.start = function () {
+        clearInterval(timer);
+        timer = 0;
+        seconds = options.seconds;
+        timer = setInterval(decrementCounter, 1000);
+    };
+
+    this.stop = function () {
+        clearInterval(timer);
+    };
+}
+
+// all environments
 app.configure(function(){
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
@@ -87,7 +161,7 @@ passport.deserializeUser(function(obj, done) {
 	
 passport.use(new FacebookStrategy(config.fb,
   function(accessToken, refreshToken, profile, done) {
-	profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture';
+	profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture?type=large';
 	console.log("+++facebook profileurl+++");
 	console.log(profile.photourl);
     return done(null, profile);
@@ -97,24 +171,38 @@ passport.use(new FacebookStrategy(config.fb,
 passport.use(new TwitterStrategy(config.tw,
   function(accessToken, refreshToken, profile, done) {
 	//profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture';
-	profile.photourl = profile.photos[0].value;
+	profile.photourl = profile.photos[0].value + '?type=large';
 	console.log("+++twitter profileurl+++");
 	console.log(profile.photourl);
     return done(null, profile);
   }
 ));
 
+
+
 app.get("/",function(req,res){
-	res.render('start');
+	if(countDownBoolean){
+		res.render('start');
+	}else{
+		res.render('login');
+	}
+	//res.render('start');
 });
 
 app.get("/login",function(req,res){
-	res.render('start');
+	if(countDownBoolean){
+		res.render('start');
+	}else{
+		res.render('login');
+	}
+	//res.render('start');
 });
 
 app.get("/error",function(req,res){
 	var removeme = req.user;
+	console.log("+++ removing error +++")
 	console.log(removeme);
+	console.log(req);
 	var again = {};
 	again.id = removeme.id;
 	again.username = removeme.username;
@@ -122,7 +210,14 @@ app.get("/error",function(req,res){
 	again.photourl = removeme.photourl;
 	again.provider = removeme.provider;
 	console.log(again);
-	client.srem("visitor:"+removeme.gender,JSON.stringify(again));
+	if(removeme.provider == 'twitter'){
+		again.gender = 'female';
+		client.srem("visitor:female",JSON.stringify(again));
+		again.gender = 'male';
+		client.srem("visitor:male",JSON.stringify(again));
+	}else{
+		client.srem("visitor:"+removeme.gender,JSON.stringify(again));
+	}
 	res.render('error');
 });
 
@@ -149,6 +244,11 @@ app.get('/subscribe2',function(req,res){
 	console.log(req.user);
 	console.log(req.query);
 	client.sadd("email",req.query.inputBox);
+	var gatherEmail = req.query.inputBox + '\r\n';
+	fs.appendFile('email.txt',gatherEmail,function(err){
+		if(err) throw err;
+		console.log('Email saved');
+	});
 	res.render('subscribe2');
 });
 
@@ -433,6 +533,27 @@ app.io.sockets.on('connection',function(socket){
 		app.io.room(req.data.room).broadcast('roomtopic',topic[Math.floor(Math.random() * topic.length)]);
 	});
 	
+	app.io.route('reload',function(req){
+		console.log("+++ removing due to reloading page +++");
+		console.log(req.data);
+		var removehere = req.data;
+		var again = {};
+		again.id = removehere.id;
+		again.username = removehere.username;
+		again.gender = removehere.gender;
+		again.photourl = removehere.photourl;
+		again.provider = removehere.provider;
+		console.log(again);
+		if(removehere.provider == 'twitter'){
+			again.gender = 'female';
+			client.srem("visitor:female",JSON.stringify(again));
+			again.gender = 'male';
+			client.srem("visitor:male",JSON.stringify(again));
+		}else{
+			client.srem("visitor:"+removehere.gender,JSON.stringify(again));
+		}
+	});
+	
 	app.io.route('leave',function(req){
 		console.log("++++signout req.data.room++++");
 		console.log(req.data.room);
@@ -452,7 +573,6 @@ app.io.sockets.on('connection',function(socket){
 		delete removegender.codename;
 		console.log(removegender);
 		client.srem("visitor:"+removegender.gender,JSON.stringify(removegender));
-		//client.srem(removeroom.name,JSON.stringify(removeroom));
 		client.del(removeroom.name);
 		console.log("@@@@@ D O N E  R E M O V I N G @@@@@");
 	});
@@ -562,7 +682,7 @@ app.io.sockets.on('connection',function(socket){
 						console.log("starting game in 30 sec");
 						setTimeout(function(){
 							start_game();
-						},60000);
+						},40000);
 					}
 				}
 			}
@@ -577,9 +697,14 @@ start_chat = function(vf,vm,cycle){
 		group_user : function(){
 			var rooms = new Array();
 			var new_vm = new Array();
-			for(var i=0; i< vf.length; i++){
+			var lowestLength = Math.min(vf.length,vm.length)
+			console.log(lowestLength);
+			for(var i=0; i<lowestLength; i++){
 				if(vm[i+1]){
-					new_vm.push(vm[i+1]);
+					var y = i + 1;
+					if(y < lowestLength){
+						new_vm.push(vm[i+1]);
+					}
 				}
 				console.log("female length");
 				console.log(vf.length);
@@ -660,7 +785,7 @@ start_chat = function(vf,vm,cycle){
 					app.io.broadcast('game_stop', true);
 				}
 				
-			},60000);
+			},120000);
 		},
 		
 	},function(err,result){

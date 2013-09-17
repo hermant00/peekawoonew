@@ -16,13 +16,13 @@ $(function(){
 		for(var i = 0; i<list_gen.length; i++){
 			//list_gen[i] = JSON.parse(list_gen[i]);
 			if(list_gen[i].id == my_chatm8.female.id){
-				if(i===0){
+				if(i==list_gen.length-1){
 					//list_gen[list_gen.length-1] = JSON.parse(list_gen[list_gen.length-1]);
-					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[list_gen.length-1].photourl+"'></img>");
+					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[0].photourl+"'></img>");
 				}
 				else{
 					//list_gen[i-1] = JSON.parse(list_gen[i-1]);
-					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[i-1].photourl+"'></img>");
+					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[i+1].photourl+"'></img>");
 				}
 			}
 		}
@@ -33,7 +33,7 @@ $(function(){
 		for(var i = 0; i<list_gen.length; i++){
 			//list_gen[i] = JSON.parse(list_gen[i]);
 			if(list_gen[i].id == my_chatm8.male.id){
-				if(i===0){
+				if(i==0){
 					//list_gen[list_gen.length-1] = JSON.parse(list_gen[list_gen.length-1]);
 					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[list_gen.length-1].photourl+"'></img>");
 				}

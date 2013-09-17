@@ -124,7 +124,7 @@ body.gender-page {
     height: 226px;
     margin-left: 59px;
     margin-top: 110px;
-    overflow-y: scroll;
+    overflow-y: auto;
     position: inherit;
     top: -32px;
     width: 577px;
@@ -135,7 +135,7 @@ body.gender-page {
     margin-left: 5px;
     position: absolute;
     text-align: left;
-    width: 61px;
+    width: 0px;
 }
 }
 .messagewindow .imgright {
@@ -145,13 +145,13 @@ body.gender-page {
     height: 49px;
     margin: -4px -14px 10px 488px;
     position: relative;
-    top: 10px;
+    top: 18px;
     width: 50px;
 }
 .me-chat {
   position: relative;
   background-color:#87cfe0;
-  margin: -64px 0 0 87px;
+  margin: -64px 0 0 100px;
   padding: 4px 17px 18px 18px;
   text-align:left;
   border-radius:10px 10px 10px 10px;
@@ -209,17 +209,24 @@ body.gender-page {
   z-index:899;
 }
 .topic_per_room {
+    background-color: #6699CC;
+    border: 2px solid skyblue;
+    border-radius: 19px 19px 19px 19px;
+    color: #000000;
     display: block;
+    font-family: arial,helvetica;
+    font-size: 18px;
+    font-style: normal;
+    height: 25px;
     margin: 0 auto;
+    opacity: 1;
     position: relative;
     text-align: center;
-    width: 317px;
-    height: 20px;
-    border: 1px solid;
+    width: 375px;
 }
 
 .header-wrapper-chat .signout-div .signout {
-    background: url("/img/hc-theme/instawoo-chatsignout.png") no-repeat scroll right center transparent;
+    background: url("/img/hc-theme/peekawoo-chatsignout.png") no-repeat scroll right center transparent;
     display: block;
     float: right;
     height: 41px;
@@ -233,7 +240,7 @@ body.gender-page {
     height: 72px;
     left: 271px;
     margin: 0 auto;
-    opacity: 0.55;
+    opacity: 0.7;
     position: absolute;
     top: 143px;
     width: 158px;
@@ -715,7 +722,7 @@ footer a, footer p {
     height: 147px;
     margin: 0 auto;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     position: relative;
     top: -27px;
     width: 536px;
@@ -807,15 +814,17 @@ footer a, footer p {
     top: -39px;
 }
 
-.ranking-container .ranking-selection-box #selection-title {
-    color: #584F4F;
-    display: block;
-    margin: 0 auto;
-    position: relative;
-    text-align: center;
-    top: 25px;
-    width: 465px;
-}
+.ranking-container .ranking-selection-box #selection-title { 
+	color: #584F4F; 
+	display: block;
+	 margin: 0 auto;
+	 position: relative;
+	 text-align: center;
+	 top: 25px;
+	 width: 465px;
+	 font-size: 32px;
+	 font-family: helvetica,arial,sans-serif;
+	        }
 
 .ranking-container .ranking-selection-box #selection-para {
     color: #584f4f;
@@ -1077,10 +1086,10 @@ body.ranking-page {
     float: left;
     font-weight: bold;
     height: 10px;
-    left: -4px;
+    left: -2px;
     position: relative;
     top: -1px;
-    width: 1px;
+    width: 3px;
 }
 .chat-page .chat-container .chat-text .rate_widget .ratings_chick {
     background: url("/img/hc-theme/chick-hide.png.png") no-repeat scroll 0 -5px / 80px 80px transparent;
@@ -1337,36 +1346,53 @@ body.loading-page {
     text-align: center;
 }
 
+.peekawoo-start-logo {
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    margin-top: -637px;
+    height: 146px;
+}
+.start-bg {
+    background-attachment: inherit;
+    background-image: url("/img/hc-theme/dimension.png");
+    background-repeat:repeat;
+    background-size: auto auto;
+    width:1348px;
+    height:645px;
+    margin-left:-202px;
+    
+}
 .error-bg {
     background-attachment: fixed;
     background-image: url("/img/hc-theme/error-bg.png");
     background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 1020px 685px;
+    background-repeat:no-repeat;
+    background-size: auto auto;
 }
-
-
 .start-image {
     background-clip: border-box;
     background-image: url("/img/hc-theme/chick-show.png.png");
     background-origin: content-box;
-    background-position: center center;
     background-repeat: no-repeat;
     background-size: auto auto;
     border: 0 solid;
     display: block;
-    height: 377px;
-    margin-top: 130px;
+    height: 105px;
+    width: 115px;
+    margin-left:75px
 }
-.start-text{
+
+.start-text {
+    color: #584F4F;
     font-family: arial,helvetica;
-    font-size: 42.19px;
-    font-style: regular;
+    font-size: 30.19px;
     font-weight: normal;
-    text-align:center;
-    color:#584f4f;
-    height:30px;
-    
+    height: 28px;
+    margin-left: 101px;
+    margin-top: -59px;
+    text-align: center;
 }
 
 .facebooklogin {

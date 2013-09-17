@@ -7,8 +7,8 @@ block content
                 p#codename
         .ranking-container
             .ranking-selection-box
-                h1#selection-title Woos
-                p#selection-para People who likes you back
+                h1#selection-title People who like you
+                br
                 .hr2
                 .ranking-selection-list
                     .ranking-left
@@ -45,5 +45,10 @@ block content
                 }
                 else{
                     document.location.href='/authtw';
+                }
+            });
+            $(document).unbind('keydown').bind('keydown', function (event) {
+                if (event.keyCode === 8 || event.keyCode === 116 || event.keyCode === 115) {
+                    event.preventDefault();
                 }
             });
