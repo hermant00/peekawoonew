@@ -33,9 +33,13 @@ block content
                 #r1.rate_widget
                     #rate.ratings_chick()
     script(src="/socket.io/socket.io.js")
-    script(language='JavaScript', type='text/javascript', src='javascripts/Audio-HTML5x.js')
     script(defer, src="/javascripts/chat.js")
     script
+        $(document).unbind('keydown').bind('keydown', function (event) {
+            if (event.keyCode === 116 || event.keyCode === 115) {
+                event.preventDefault();
+            }
+        });
         var seconds = 120;
         function secondPassed() {
             var minutes = Math.floor(seconds/60);
@@ -73,3 +77,8 @@ block content
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+        
+        script
+            window.location.hash="no-back-button";
+            window.location.hash="Again-no-back-button";//for google chrome
+            window.onhashchange=function(){window.location.hash="no-back-button";}

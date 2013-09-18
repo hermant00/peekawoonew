@@ -759,11 +759,12 @@ footer a, footer p {
     vertical-align: middle;
     width: 70px;
 }
+
 .ranking-container {
-  width: 100%;
-  height: 510px;
-  overflow: hidden;
-  position: relative;
+    height: 555px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
 }
 
 .ranking-container .ranking-selection-box {
@@ -1284,7 +1285,7 @@ body.loading-page {
     background-image: url("/img/hc-theme/peekawoo-beta.png");
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 238px 72px;
+    background-size: 238px auto;
     height: 70px;
 }
 .peekawoo-logo3 {
@@ -1431,6 +1432,13 @@ body.loading-page {
     background-repeat: no-repeat;
     background-size: auto auto;
     height: 158px;
+}
+.peekawoo-error-logo2 {
+    background-image: url("/img/hc-theme/peekawoo-beta.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 444px auto;
+    height: 114px;
 }
 .error-blue-image {
     background-clip: border-box;

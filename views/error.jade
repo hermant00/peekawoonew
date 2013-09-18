@@ -9,3 +9,8 @@ block content
                 p.text-error2 Come back later or refresh the page
                 center
                     input.btn.btn-info.btn-large(type="button" onclick="window.location='/login'" value="Go to Login")
+
+        script
+            window.location.hash="no-back-button";
+            window.location.hash="Again-no-back-button";//for google chrome
+            window.onhashchange=function(){window.location.hash="no-back-button";}

@@ -36,7 +36,8 @@ block content
                         input.email.ranking-email(type="email", name="inputBox", placeholder="Enter your email here", required='required')
                     button.subscribe-button2(type='submit',name='input.email')     
                     a.text-skipfornow2(href='/login') skip for now
-                    <a href="http://srvy.it/16dACKY" target="_blank">Feedback link http://srvy.it/16dACKY!</a>
+                    br
+                    a.btn.btn-primary(href='http://srvy.it/16dACKY') For feedback
         script
             $('#submit_rating').click(function(){
                 var userme = $('#user1').val();
@@ -52,3 +53,8 @@ block content
                     event.preventDefault();
                 }
             });
+            
+        script
+            window.location.hash="no-back-button";
+            window.location.hash="Again-no-back-button";//for google chrome
+            window.onhashchange=function(){window.location.hash="no-back-button";}

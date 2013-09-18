@@ -25,4 +25,23 @@ block content
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
-        
+            var setTimeCount;
+            var checkHours = new Date().getHours();
+            if(checkHours > 19){
+                setTimeCount = 0;
+            }
+            else{
+                var newDate = new Date().getTime();
+                var setDateCount = new Date();
+                setDateCount.setHours(20,0,0,0);
+                setTimeCount = Number(setDateCount) - Number(newDate);
+                setTimeCount/=1000;
+            }
+            var myCountdown2 = new Countdown({
+                time: setTimeCount,
+                width:200,
+                height:80,
+                rangeHi:"hour",
+                style:"flip"
+            });
+            $('#stage_jbeeb_3').css('top','160px');
