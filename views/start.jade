@@ -2,20 +2,28 @@ extends layout
 
 block content
     body.container
-    .start-bg
-    .head.peekawoo-start-logo
-                br
-                br
-                br
-                br
-                br
-                br
-                br
-                br                
-                iframe(width='420', height='315', src='//www.youtube.com/embed/OvxH_pN8I88', frameborder='0', allowfullscreen='allowfullscreen')
-                .start-image
-                p.start-text Speed date starts at 8:00pm to 12mn (+8:00 GMT)
-                a.btn.btn-primary(href='http://signup.peekawoo.com/') Subscribe
+        .start-bg
+        .head.peekawoo-start-logo
+            br
+            br
+            br
+            br
+            br
+            br
+            br
+            br
+            .span12
+                .span5#youtube                
+                    iframe(width='420', height='315', src='//www.youtube.com/embed/OvxH_pN8I88', frameborder='0', allowfullscreen='allowfullscreen')
+                .span6
+                    p.span4.start-text Speed date starts in
+                    .span4.top-buffer
+                    .span4.top-buffer
+                    .span4.top-buffer
+                    .span4.top-buffer
+                    .span4.top-buffer
+                    .span4.start-image
+                    a.btn.btn-primary.subs-top.btn-custom(href='http://signup.peekawoo.com/') Subscribe to Updates
         script(type='text/javascript')
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-43851834-1']);
@@ -44,4 +52,8 @@ block content
                 rangeHi:"hour",
                 style:"flip"
             });
-            $('#stage_jbeeb_3').css('top','160px');
+            $('#stage_jbeeb_3').css('top','-230px');
+            $('#stage_jbeeb_3').css('float','right');
+            $('#stage_jbeeb_3').css('right','110px');
+            $('#stage_jbeeb_3').css('left','');
+            $('#youtube').css('top','50px');

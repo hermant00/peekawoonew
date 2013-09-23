@@ -26,7 +26,7 @@ var app = express();
 var newuser = false;
 //var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
 app.http().io();
-var countDownBoolean = true;
+//var countDownBoolean = false;
 var topic;
 var listTopic = new Array();
 
@@ -52,79 +52,79 @@ function displayOutput(){
 	console.log(topic);
 }
 
-var currentTimeCount = new Date().getTime();
-console.log(currentTimeCount);
-var setTimeCount = new Date();
-setTimeCount.setHours(20);
-console.log(setTimeCount);
-var computeSample = Math.abs(setTimeCount - currentTimeCount);
-console.log(computeSample);
-if(computeSample >= 0){
-	var secVal = computeSample;
-	console.log(Number(secVal));
-	secVal1 = Math.ceil((secVal/1000)-1);
-	console.log(Number(secVal1));
-}else{
-	secVal1 = 0;
-}
+//var currentTimeCount = new Date().getTime();
+//console.log(currentTimeCount);
+//var setTimeCount = new Date();
+//setTimeCount.setHours(20);
+//console.log(setTimeCount);
+//var computeSample = Math.abs(setTimeCount - currentTimeCount);
+//console.log(computeSample);
+//if(computeSample >= 0){
+//	var secVal = computeSample;
+//	console.log(Number(secVal));
+//	secVal1 = Math.ceil((secVal/1000)-1);
+//	console.log(Number(secVal1));
+//}else{
+//	secVal1 = 0;
+//}
 
-var myCounter = new Countdown({
-	seconds: 71000,
-    onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
-    onCounterEnd: function(){ console.log('counter ended!');
-    	console.log("xxXXxx I'm here to Login xxXXxx");
-    	countDownBoolean = false;
-    	newCounter.start();
-    }
-});
-myCounter.start();
-var newCounter = new Countdown({
-	seconds:15500,
-	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
-    onCounterEnd: function(){ console.log('counter ended!');
-    console.log("xxXXxx I'm here to CountDown xxXXxx");
-    	countDownBoolean = true;
-    	alterCounter.start();
-    }
-});
+//var myCounter = new Countdown({
+//	seconds: 71000,
+//    onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+//    onCounterEnd: function(){ console.log('counter ended!');
+//    	console.log("xxXXxx I'm here to Login xxXXxx");
+//    	countDownBoolean = false;
+//    	newCounter.start();
+//    }
+//});
+//myCounter.start();
+//var newCounter = new Countdown({
+//	seconds:15500,
+//	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+//    onCounterEnd: function(){ console.log('counter ended!');
+//    console.log("xxXXxx I'm here to CountDown xxXXxx");
+//    	countDownBoolean = true;
+//    	alterCounter.start();
+//    }
+//});
 
-var alterCounter = new Countdown({
-	seconds:70000,
-	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
-    onCounterEnd: function(){ console.log('counter alter!');
-    console.log("xxXXxx I'm here to CountDown xxXXxx");
-    	countDownBoolean = false;
-    	newCounter.start();
-    }
-});
+//var alterCounter = new Countdown({
+//	seconds:70000,
+//	onUpdateStatus: function(sec){console.log(sec);}, // callback for each second
+//    onCounterEnd: function(){ console.log('counter alter!');
+//    console.log("xxXXxx I'm here to CountDown xxXXxx");
+//    	countDownBoolean = false;
+//    	newCounter.start();
+//    }
+//});
 
-function Countdown(options) {
-    var timer,
-    instance = this,
-    seconds = options.seconds,
-    updateStatus = options.onUpdateStatus || function () {},
-    counterEnd = options.onCounterEnd || function () {};
+//function Countdown(options) {
+//    var timer,
+//    instance = this,
+//    seconds = options.seconds,
+//    updateStatus = options.onUpdateStatus || function () {},
+//    counterEnd = options.onCounterEnd || function () {};
 
-    function decrementCounter() {
-        updateStatus(seconds);
-        if (seconds === 0) {
-            counterEnd();
-            instance.stop();
-        }
-        seconds--;
-    }
+//    function decrementCounter() {
+//        updateStatus(seconds);
+//        if (seconds === 0) {
+//            counterEnd();
+//            instance.stop();
+//        }
+//        seconds--;
+//    }
 
-    this.start = function () {
-        clearInterval(timer);
-        timer = 0;
-        seconds = options.seconds;
-        timer = setInterval(decrementCounter, 1000);
-    };
+//    this.start = function () {
+//        clearInterval(timer);
+//        timer = 0;
+//        seconds = options.seconds;
+//        timer = setInterval(decrementCounter, 1000);
+//    };
 
-    this.stop = function () {
-        clearInterval(timer);
-    };
-}
+//    this.stop = function () {
+//        clearInterval(timer);
+//    };
+//}
 
 // all environments
 app.configure(function(){
@@ -181,21 +181,21 @@ passport.use(new TwitterStrategy(config.tw,
 
 
 app.get("/",function(req,res){
-	if(countDownBoolean){
-		res.render('start');
-	}else{
-		res.render('login');
-	}
-	//res.render('start');
+	//if(countDownBoolean){
+	//	res.render('start');
+	//}else{
+	//	res.render('login');
+	//}
+	res.render('login');
 });
 
 app.get("/login",function(req,res){
-	if(countDownBoolean){
-		res.render('start');
-	}else{
-		res.render('login');
-	}
-	//res.render('start');
+	//if(countDownBoolean){
+	//	res.render('start');
+	//}else{
+	//	res.render('login');
+	//}
+	res.render('login');
 });
 
 app.get("/error",function(req,res){
@@ -682,7 +682,7 @@ app.io.sockets.on('connection',function(socket){
 						console.log("starting game in 30 sec");
 						setTimeout(function(){
 							start_game();
-						},40000);
+						},30000);
 					}
 				}
 			}

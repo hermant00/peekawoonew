@@ -26,7 +26,7 @@ socket.on('game_stop',function(){
 });
 setTimeout(function(){
 	window.location = '/error';
-},240000);
+},120000);
 //$(document).unbind('keydown').bind('keydown', function (event) {
 //    if (event.keyCode === 8 || event.keyCode === 116 || event.keyCode === 115) {
         //event.preventDefault();

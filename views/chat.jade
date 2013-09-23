@@ -78,7 +78,6 @@ block content
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
         
-        script
-            window.location.hash="no-back-button";
-            window.location.hash="Again-no-back-button";//for google chrome
-            window.onhashchange=function(){window.location.hash="no-back-button";}
+        window.location.hash="no-back-button";
+        window.location.hash="Again-no-back-button";//for google chrome
+        window.onhashchange=function(){window.location.hash="no-back-button";}

@@ -1267,11 +1267,12 @@ body.loading-page {
 }
 
 .index-bg {
-    background-attachment: fixed;
-    background-image: url("/img/hc-theme/index-bg.png");
-    background-position: center center;
-    background-repeat: no-repeat;
+
+    background-attachment: inherit;
+    background-image: url("/img/hc-theme/dimension.png");
+    background-repeat:repeat;
     background-size: auto auto;
+
 }
 
 .peekawoo-logo {
@@ -1306,17 +1307,17 @@ body.loading-page {
     border: 0 solid;
     display: block;
     height: 414px;
-    margin-top: -69px;
+    margin-left: -12px;
     opacity: 0.67;
+    width: 520px;
 }
 .index-form-container {
     background-attachment: inherit;
     border: 0 solid;
     display: block;
     height: 296px;
-    left: 44px;
-    margin-left: 230px;
-    margin-top: 225px;
+    margin-left: 70px;
+    margin-top: 11px;
     top: -54px;
     width: 373px;
 }
@@ -1381,8 +1382,8 @@ body.loading-page {
     border: 0 solid;
     display: block;
     height: 105px;
-    width: 115px;
-    margin-left:75px
+    width: 105px;
+    margin-left:40px
 }
 
 .start-text {
@@ -1390,10 +1391,9 @@ body.loading-page {
     font-family: arial,helvetica;
     font-size: 30.19px;
     font-weight: normal;
-    height: 28px;
-    margin-left: 101px;
-    margin-top: -59px;
+    margin-top: 110px;
     text-align: center;
+    width: 460px;
 }
 
 .facebooklogin {
@@ -1701,7 +1701,9 @@ margin-left: 130px;
 
 .form-login {
     display: block;
-    margin: 50px;
+    float: right;
+    margin: -50px -40px 0px 0px;
+    width: 520px;
 }
 
 .hr-line {
@@ -1734,4 +1736,43 @@ input.ranking-email[type="email"] {
     margin-left: -376px;
     margin-top: -16px;
     width: 314px;
-}    
+}
+
+#youtube {
+	margin-left: 60px;
+	margin-top: 60px;
+}
+
+.top-buffer { margin-top:20px; }
+
+.subs-top { 
+	margin-right:100px;
+    margin-top:40px;
+    font-family: helvetica;
+    font-size: 17px;
+}
+.btn-custom {
+    background-color: hsl(36, 100%, 38%) !important; 
+    background-repeat: repeat-x; 
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffa928", endColorstr="#c17400"); 
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#ffa928), to(#c17400)); 
+    background-image: -moz-linear-gradient(top, #ffa928, #c17400); 
+    background-image: -ms-linear-gradient(top, #ffa928, #c17400); 
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffa928), color-stop(100%, #c17400)); 
+    background-image: -webkit-linear-gradient(top, #ffa928, #c17400); 
+    background-image: -o-linear-gradient(top, #ffa928, #c17400); 
+    background-image: linear-gradient(#ffa928, #c17400); 
+    border-color: #c17400 #c17400 hsl(36, 100%, 33%); 
+    color: #fff !important; 
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33); 
+    -webkit-font-smoothing: antialiased;
+}
+
+.span-height {
+    margin-top: 60px;
+}
+
+.container-login {
+    text-align: center;
+    width: 1010px;
+}
