@@ -1,15 +1,15 @@
 extends layout
 
 block content
-    body.container.error-bg
+    body.container.error-bg(oncontextmenu='return false;')
+        #pd1380184526508.pd-embed
         .head.peekawoo-error-logo
             .container
                 .error-blue-image
                 p.text-error1 Something went kookoo!
-                p.text-error2 Come back later or refresh the page
+                p.text-error2 Please login again..
                 center
-                    input.btn.btn-info.btn-large(type="button" onclick="window.location='/login'" value="Go to Login")
-
+                    input.btn.btn-info.btn-large(type="button" onclick="window.location='/'" value="Go to Login")
         script
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-43851834-1']);

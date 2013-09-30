@@ -1,7 +1,8 @@
 extends layout
 
 block content
-    body.container.ranking-page
+    body.container.ranking-page(oncontextmenu='return false;')
+        #pd1380184526508.pd-embed
         .head.peekawoo-logo3
             .container
                 p#codename
@@ -35,7 +36,7 @@ block content
                     .container
                         input.email.ranking-email(type="email", name="inputBox", placeholder="Enter your email here", required='required')
                     button.subscribe-button2(type='submit',name='input.email')     
-                    a.text-skipfornow2(href='/login') skip for now
+                    a.text-skipfornow2(href='/') skip for now
                     br
                     a.btn.btn-primary(href='http://srvy.it/16dACKY') For feedback
         script

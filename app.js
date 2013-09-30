@@ -29,6 +29,9 @@ app.http().io();
 //var countDownBoolean = false;
 var topic;
 var listTopic = new Array();
+var haveData = new Array();
+var myArray = new Array();
+var countUserInside = 0;
 
 var temp = 0;
 var fs = require('fs');
@@ -189,16 +192,17 @@ app.get("/",function(req,res){
 	res.render('login');
 });
 
-app.get("/login",function(req,res){
+//app.get("/login",function(req,res){
 	//if(countDownBoolean){
 	//	res.render('start');
 	//}else{
 	//	res.render('login');
 	//}
-	res.render('login');
-});
+//	res.render('login');
+//});
 
 app.get("/error",function(req,res){
+	async.auto
 	var removeme = req.user;
 	console.log("+++ removing error +++")
 	console.log(removeme);
@@ -215,10 +219,38 @@ app.get("/error",function(req,res){
 		client.srem("visitor:female",JSON.stringify(again));
 		again.gender = 'male';
 		client.srem("visitor:male",JSON.stringify(again));
+		client.smembers("visitor:female",function(err,datas){
+			if(datas.length > 0){
+				res.render('error');
+			}
+			else{
+				client.smembers("visitor:male",function(err,datax){
+					if(datax.length > 0){
+						res.render('error');
+					}else{
+						res.render('error2');
+					}
+				});
+			}
+		});
 	}else{
 		client.srem("visitor:"+removeme.gender,JSON.stringify(again));
+		client.smembers("visitor:female",function(err,datas){
+			if(datas.length > 0){
+				res.render('error');
+			}
+			else{
+				client.smembers("visitor:male",function(err,datax){
+					if(datax.length > 0){
+						res.render('error');
+					}else{
+						res.render('error2');
+					}
+				});
+			}
+		});
+		
 	}
-	res.render('error');
 });
 
 app.get('/authfb',
@@ -228,13 +260,13 @@ app.get('/authtw',
 		  passport.authenticate('twitter'));
 
 app.get('/authfb/callback',
-		passport.authenticate('facebook', { failureRedirect: '/login' }),
+		passport.authenticate('facebook', { failureRedirect: '/' }),
 		function(req, res) {
 			res.redirect('/option');
 });
 
 app.get('/authtw/callback',
-		passport.authenticate('twitter', { failureRedirect: '/login' }),
+		passport.authenticate('twitter', { failureRedirect: '/' }),
 		function(req, res) {
 			res.redirect('/option');
 });
@@ -417,35 +449,40 @@ app.get('/chat/:room',function(req,res){
 		}else{
 			container = data.male.gender;
 		}
+		client.lrange('last:'+req.user.id,1,1,function(err,chat){
 		client.smembers("visitor:"+container,function(err,results){
 			console.log("****LIST of Opposite Gender****");
 			console.log(listgender);
 			results.forEach(function(key){
 				console.log(key);
 				console.log(JSON.parse(key));
-				listgender.push(JSON.parse(key));
+				var checkChat = JSON.parse(key);
+				if(checkChat.id == chat){
+					listgender.push(key);
+				}
 			});
 			//outside the smembers put dated 9-4-13 10:22am
 			console.log("****Complete List of Opposite Gender****");
 			console.log(listgender);
 			var up = {};
 			//if(req.user.provider=='twitter'){
-			gender = req.user.gender;
+			//gender = req.user.gender;
 			console.log("****GENDER IF Twitter USE****");
-			console.log(gender);
+			//console.log(gender);
 			// console.log("data."+gender+".gender");
 			// up.gender = "data."+gender+".gender"
 			//}
 			//else{
-			up.gender = req.user.gender;
 			//}
 			up.id = req.user.id;
 			up.username = req.user.username;
+			up.gender = req.user.gender;
 			up.photourl = req.user.photourl;
 			up.provider = req.user.provider;
 			up.codename = req.user.codename;
 			res.render('chat',{user: up, room: data, listgen: listgender});
 
+		});
 		});
 	});
 	
@@ -464,7 +501,7 @@ app.io.set('authorization', function (handshakeData, callback) {
 		console.log("checking cookies");
 		console.log(cookies.length);
 		for(var i = 0; i<cookies.length; i++){
-			var checkMe = cookies[i].search("peekawoo");
+			var checkMe = cookies[i].search("peekawoo=");
 			console.log(checkMe);
 			if(checkMe >= 0){
 				console.log("i'm at Array number "+i+" location "+checkMe);
@@ -480,20 +517,9 @@ app.io.set('authorization', function (handshakeData, callback) {
 				break;
 			}
 		}
-		//if(cookies.length > 1){
-		//	console.log("goes greater");
-		//	cookies = cookies[1].split("=");
-		//}
-		//else{
-		//	console.log("goes lessthan");
-		//	cookies = cookies[0].split("=");
-		//}
 		console.log("here is the perfect result");
 		console.log(sampleMe);
-		//console.log("after");
-		//console.log(cookies);
 		sid = sampleMe[0].replace("s%3A","").split(".")[0];
-		//sid = cookies[1].replace("s%3A","").split(".")[0];
 		console.log("checking cookies");
 		console.log(sid);
 		console.log(sampleMe);
@@ -502,7 +528,8 @@ app.io.set('authorization', function (handshakeData, callback) {
 				return callback("Error retrieving session!",false);
 			}
 			handshakeData.peekawoo = {
-					user : session.passport.user
+					user : session.passport.user,
+					sessionid : sid
 			};
 			console.log("===== Connecting . . . =====");
 			return callback(null,true);
@@ -522,6 +549,112 @@ app.io.set('store', new express.io.RedisStore({
 }));
 
 app.io.sockets.on('connection',function(socket){
+	console.log("xxXX connecting clients . . . XXxx");
+	console.log(socket);
+	console.log(socket.handshake);
+	console.log("xxX pushing socket.id Xxx");
+	var userx = socket.handshake.peekawoo.user;
+	var usery = socket.handshake.peekawoo.sessionid;
+	var countQty = false;
+	console.log(myArray.length);
+	if(myArray.length <= 0){
+		myArray.push(usery);
+		var list = {}; 
+		list.user = usery;
+		list.connected = true;
+		haveData.push(list);
+		console.log(haveData);
+		countUserInside++;
+	}
+	else {
+		for(var i = 0;i<myArray.length;i++){
+			console.log(myArray.length);
+			var searchUser = myArray[i].search(usery);
+			console.log(myArray[i]);
+			console.log(searchUser);
+			if(searchUser >=0){
+				for(var j = 0;j<haveData.length; j++){
+					var checkingVal = haveData[j];
+					if(checkingVal.user == usery){
+						h = 1;
+						countQty = true;
+						haveData[j].connected = true;
+						console.log("im connected");
+						console.log(haveData[j].connected);
+						break;
+					}
+				}
+				break;
+			}
+		}
+		if(!countQty){
+			myArray.push(socket.handshake.peekawoo.sessionid);
+			var listnew = {}; 
+			listnew.user = usery;
+			listnew.connected = true;
+			haveData.push(listnew);
+			countUserInside++;
+			console.log(haveData);
+		}
+	}
+
+	console.log("xxXX Normal Data came here XXxx");
+	console.log(haveData);
+	console.log(myArray);
+	socket.on('disconnect',function(){
+		var disconnectData;
+		for(var k = 0; k<haveData.length;k++){
+			disconnectData = haveData[k];
+			if(disconnectData.user == usery){
+				disconnectData.connected = false;
+				break;
+			}
+		}
+		console.log("out ne me");
+		console.log("deletion of files");
+		console.log(haveData);
+		var clockTick = setTimeout(function(){
+			console.log(disconnectData);
+			if(disconnectData.user == usery && disconnectData.connected == false){
+				console.log(disconnectData.user + ' connection ' + disconnectData.connected);
+				for(var l = 0;l<myArray.length;l++){
+					var removeUser = myArray[l].search(usery);
+					if(removeUser >= 0){
+						myArray.splice(l,1);
+					}
+				}
+				console.log(haveData.length);
+				for(var m = 0;m<haveData.length;m++){
+					var removeDataHere = haveData[m];
+					if(removeDataHere.user == usery && removeDataHere.connected == false){
+						haveData.splice(m,1);
+					}
+				}
+				countUserInside--;
+				var removing = {};
+				removing.id = userx.id;
+				removing.username = userx.username;
+				removing.gender = userx.gender;
+				removing.photourl = userx.photourl;
+				removing.provider = userx.provider;
+				console.log(removing);
+				//if(removeme.provider == 'twitter'){
+				//	removing.gender = 'female';
+				//	client.srem("visitor:female",JSON.stringify(removing));
+				//	removing.gender = 'male';
+				//	client.srem("visitor:male",JSON.stringify(removing));
+				//}else{
+					client.srem("visitor:"+removing.gender,JSON.stringify(removing));
+				//}
+			}
+			console.log("xxXX After removing of data XXxx");
+			console.log(myArray);
+			console.log(haveData);
+			console.log("xxXX ====================== XXxx");
+		},60000);
+	});
+
+	
 	console.log("===================");
 	console.log(socket.handshake.peekawoo.user);
 	console.log("===================");
@@ -620,6 +753,7 @@ app.io.sockets.on('connection',function(socket){
 		async.auto({
 			checkIfExist : function(callback){
 				console.log("checking if goes in here");
+				console.log(req);
 				var gender = JSON.parse(req.data);
 				var me = {};
 				me.id = gender.id;
@@ -732,6 +866,8 @@ start_chat = function(vf,vm,cycle){
 					console.log("++++Start Conversation++++");
 					console.log(room);
 					console.log("++++++++++++++++++++++++++");
+					client.lpush('last:'+vfs.id,vms.id);
+					client.lpush('last:'+vms.id,vfs.id);
 					app.io.broadcast(vfs.id, room);
 					app.io.broadcast(vms.id, room);
 					

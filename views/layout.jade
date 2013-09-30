@@ -6,7 +6,7 @@ html.no-js.ie7.oldie(lang="en")
 //if IE 8
 html.no-js.ie8.oldie(lang="en")
 //if gt IE 8
-html.no-js(lang="en")
+html.no-js(lang="en",oncontextmenu='return false;')
     head
         meta(charset="utf-8")
         meta(http-equiv="Expires" CONTENT="0")
@@ -17,7 +17,8 @@ html.no-js(lang="en")
         meta(name="description", content="")
         meta(name="author", content="")
         meta(name="viewport", content="width=device-width, initial-scale=1")
-        link(rel='shortcut icon', href='/img/hc-theme/favicon.ico', type='image/x-icon')
+        link(rel='shortcut icon', href='img/hc-theme/favicon.ico', type='image/x-icon')
+        link(rel='icon', href='img/hc-theme/favicon.ico', type='image/x-icon')
         link(href='css/bootstrap-responsive.min.css', rel='stylesheet')
         link(href='css/bootstrap.css', rel='stylesheet')
         link(href='css/bootstrap.icon-large.min.css', rel='stylesheet')
@@ -31,5 +32,22 @@ html.no-js(lang="en")
         script(src="/javascripts/jquery.lwtCountdown-1.0.js")
         script(src="http://code.jquery.com/ui/1.10.2/jquery-ui.js")
         link(rel="stylesheet" type="text/css" media="all screen", href="/stylesheets/small-device.css")
-        body
+    body
         block content
+    script(type='text/javascript')
+        var _polldaddy = [] || _polldaddy;
+        _polldaddy.push( {
+            title: 'Give Us Feedback!',
+            type: 'banner',
+            style: 'corner',
+            align: 'top-left',
+            text_color: 'FFFFFF',
+            back_color: '000000',
+            domain: 'peekawooapp.polldaddy.com/s/',
+            id: 'peekawoo-chat-feedback-survey',
+            placeholder: 'pd1380184526508'
+        } );
+        (function(d,c,j){if(!document.getElementById(j)){var pd=d.createElement(c),s;pd.id=j;pd.src='http://i0.poll.fm/survey.js';s=document.getElementsByTagName(c)[0];s.parentNode.insertBefore(pd,s);}}(document,'script','pd-embed'));
+    noscript
+        a(href='http://peekawooapp.polldaddy.com/s/peekawoo-chat-feedback-survey') Give Us Feeback!
+        

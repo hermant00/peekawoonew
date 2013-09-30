@@ -1,8 +1,8 @@
 extends layout
 
 block content
-    body.container.index-bg
-        #pd1379581899473.pd-embed
+    body.container.index-bg(oncontextmenu='return false;')
+        #pd1380184526508.pd-embed
         .head.peekawoo-logo
         .container.container-login
             .span6.span-height
@@ -31,17 +31,3 @@ block content
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
-
-            var _polldaddy = [] || _polldaddy;
-            _polldaddy.push( {
-                type: 'slider',
-                title: 'Take Our Survey!',
-                body: 'Please help us improve our service to you by taking our quick survey :)',
-                button: 'Get Started »',
-                domain: 'peekawooapp.polldaddy.com/s/',
-                id: 'peekawoo-chat-feedback-survey',
-                placeholder: 'pd1379581899473'
-            } );
-            (function(d,c,j){if(!document.getElementById(j)){var pd=d.createElement(c),s;pd.id=j;pd.src='http://i0.poll.fm/survey.js';s=document.getElementsByTagName(c)[0];s.parentNode.insertBefore(pd,s);}}(document,'script','pd-embed'));
-        noscript
-            a(href='http://peekawooapp.polldaddy.com/s/peekawoo-chat-feedback-survey') Take Our Survey!

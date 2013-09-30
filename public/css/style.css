@@ -269,7 +269,7 @@ body.gender-page {
     height: 126px;
     margin: 0 auto;
     position: relative;
-    right: 48px;
+    right: 528px;
     top: -124px;
     width: 126px;
     z-index: 999;
@@ -305,7 +305,7 @@ body.gender-page {
     display: block;
     float: left;
     height: 126px;
-    left: 43px;
+    left: 527px;
     margin: 0 auto;
     position: relative;
     top: -124px;
@@ -1026,7 +1026,7 @@ body.ranking-page {
 }
 .dash {
     border: 0 solid blue;
-    color: white;
+    color: black;
     float: left;
     height: 26px;
     width: 28px;
@@ -1452,6 +1452,17 @@ body.loading-page {
     height: 377px;
     margin-top: 130px;
 }
+.error-blue-image2 {
+    background-clip: border-box;
+    background-image: url("/img/hc-theme/error-blue2.png");
+    background-origin: content-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    display: block;
+    height: 307px;
+    margin-top: 147px;
+}
 .text-error1{
     font-family: times new roman;
     font-size: 44.19px;
@@ -1469,7 +1480,23 @@ body.loading-page {
     text-align:center;
     color:#584f4f;
 }
-
+.text-error3{
+    font-family: helvetica;
+    font-size: 44.19px;
+    font-style: regular;
+    font-weight: normal;
+    text-align:center;
+    color:#584f4f;
+    height:30px;
+}
+.text-error4 {
+    color: #584F4F;
+    font-family: helvetica;
+    font-size: 24.38px;
+    font-weight: normal;
+    margin-top: 29px;
+    text-align: center;
+}
 .subscribe-image {
     background-clip: border-box;
     background-image: url("/img/hc-theme/subscribe-image.png");
@@ -1775,4 +1802,8 @@ input.ranking-email[type="email"] {
 .container-login {
     text-align: center;
     width: 1010px;
+}
+.buttonerror{
+    display:block;
+    width:110px;
 }
