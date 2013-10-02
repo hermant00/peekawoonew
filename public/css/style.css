@@ -300,6 +300,7 @@ body.gender-page {
 }
     
 .chat-container .photo-con .previous-photo {
+	background: silver;
     border: 6px solid #5C5353;
     border-radius: 100px 100px 100px 100px;
     display: block;
@@ -1464,7 +1465,7 @@ body.loading-page {
     margin-top: 147px;
 }
 .text-error1{
-    font-family: times new roman;
+    font-family: helvetica;
     font-size: 44.19px;
     font-style: regular;
     font-weight: normal;
@@ -1473,7 +1474,7 @@ body.loading-page {
     height:30px;
 }
 .text-error2{
-    font-family: times new roman;
+    font-family: helvetica;
     font-size: 24.38px;
     font-style: regular;
     font-weight: normal;
@@ -1605,7 +1606,8 @@ body.loading-page {
     display: block;
     height: 234px;
     left: 44px;
-    margin-left: 227px;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 170px;
     top: 9px;
     width: 480px;
@@ -1755,12 +1757,13 @@ input[type="email"] {
 }
 .container {
     text-align: center;
+    width: 100%;
 }
 
 
 input.ranking-email[type="email"] {
     border-radius: 8px 8px 8px 8px;
-    margin-left: -376px;
+    margin-left: -160px;
     margin-top: -16px;
     width: 314px;
 }
@@ -1807,3 +1810,35 @@ input.ranking-email[type="email"] {
     display:block;
     width:110px;
 }
+
+.button {
+   border-top: 1px solid #e8a623;
+   background: #d6b065;
+   background: -webkit-gradient(linear, left top, left bottom, from(#ed871a), to(#d6b065));
+   background: -webkit-linear-gradient(top, #ed871a, #d6b065);
+   background: -moz-linear-gradient(top, #ed871a, #d6b065);
+   background: -ms-linear-gradient(top, #ed871a, #d6b065);
+   background: -o-linear-gradient(top, #ed871a, #d6b065);
+   padding: 5.5px 11px;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: #ffffff;
+   font-size: 12px;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+.button:hover {
+   border-top-color: #db6f11;
+   background: #db6f11;
+   color: #cccccc;
+   }
+.button:active {
+   border-top-color: #d99623;
+   background: #d99623;
+   }

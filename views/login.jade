@@ -1,14 +1,14 @@
 extends layout
 
 block content
-    body.container.index-bg(oncontextmenu='return false;')
+    body.container.index-bg(oncontextmenu='return false;',onload='document.form1.inputBox.focus()')
         #pd1380184526508.pd-embed
         .head.peekawoo-logo
         .container.container-login
             .span6.span-height
                 iframe(width='420', height='315', src='//www.youtube.com/embed/OvxH_pN8I88', frameborder='0', allowfullscreen='allowfullscreen')
             .span6.span-height
-                form.form-login(method='get', action='/subscribe2', id='subscribe').span6
+                form.form-login(name='form1', method='get', action='/subscribe2', id='subscribe',onsubmit="return ValidateEmail()").span6
                     .span5.index-form-container
                         br
                         h1.text-signin Sign In
@@ -31,3 +31,15 @@ block content
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
+            function ValidateEmail(){
+                var inputText = document.form1.inputBox.value;
+                var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                if(inputText.value.match(mailformat)){
+                    document.form1.inputBox.focus();
+                    return true;
+                }else{
+                    alert("You have entered an invalid email address!");
+                    document.form1.inputBox.focus();
+                    return false;
+                }
+            }

@@ -16,19 +16,6 @@ $(function(){
 		if(list_gen.length > 0){
 			$(".previous-photo").html("<img class='ppimg' src='"+JSON.parse(list_gen).photourl+"'></img>");
 		}
-//		for(var i = 0; i<list_gen.length; i++){
-			//list_gen[i] = JSON.parse(list_gen[i]);
-//			if(list_gen[i].id == my_chatm8.female.id){
-//				if(i==list_gen.length-1){
-					//list_gen[list_gen.length-1] = JSON.parse(list_gen[list_gen.length-1]);
-//					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[0].photourl+"'></img>");
-//				}
-//				else{
-					//list_gen[i-1] = JSON.parse(list_gen[i-1]);
-//					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[i+1].photourl+"'></img>");
-//				}
-//			}
-//		}
 		contmechatm8 = {user: user,mate:my_chatm8.female};
 	}
 	else{
@@ -36,19 +23,6 @@ $(function(){
 		if(list_gen.length > 0){
 			$(".previous-photo").html("<img class='ppimg' src='"+JSON.parse(list_gen).photourl+"'></img>");
 		}
-//		for(var i = 0; i<list_gen.length; i++){
-			//list_gen[i] = JSON.parse(list_gen[i]);
-//			if(list_gen[i].id == my_chatm8.male.id){
-//				if(i==0){
-					//list_gen[list_gen.length-1] = JSON.parse(list_gen[list_gen.length-1]);
-//					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[list_gen.length-1].photourl+"'></img>");
-//				}
-//				else{
-					//list_gen[i-1] = JSON.parse(list_gen[i-1]);
-//					$(".previous-photo").html("<img class='ppimg' src='"+list_gen[i-1].photourl+"'></img>");
-//				}
-//			}
-//		}
 		contmechatm8 = {user: user,mate:my_chatm8.male};
 	}
 	
@@ -72,7 +46,7 @@ $(function(){
 			window.location = '/chat/'+data.name;
 		}
 		else{
-			window.location = '/error';
+			window.location = '/loading';
 		}
 	});
 	

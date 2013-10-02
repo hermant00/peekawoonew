@@ -24,7 +24,6 @@ var rotationGame = 0;
 var cycle_turn = false;
 var app = express();
 var newuser = false;
-//var topic = ["MOVIES","FOODS","PEOPLE","PLACES","GADGETS","COUNTRY","SCHOOL","LITERATURE"];
 app.http().io();
 //var countDownBoolean = false;
 var topic;
@@ -173,7 +172,6 @@ passport.use(new FacebookStrategy(config.fb,
 
 passport.use(new TwitterStrategy(config.tw,
   function(accessToken, refreshToken, profile, done) {
-	//profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture';
 	profile.photourl = profile.photos[0].value + '?type=large';
 	console.log("+++twitter profileurl+++");
 	console.log(profile.photourl);
@@ -184,73 +182,37 @@ passport.use(new TwitterStrategy(config.tw,
 
 
 app.get("/",function(req,res){
-	//if(countDownBoolean){
-	//	res.render('start');
-	//}else{
-	//	res.render('login');
-	//}
 	res.render('login');
 });
 
-//app.get("/login",function(req,res){
-	//if(countDownBoolean){
-	//	res.render('start');
-	//}else{
-	//	res.render('login');
-	//}
-//	res.render('login');
-//});
-
 app.get("/error",function(req,res){
-	async.auto
 	var removeme = req.user;
 	console.log("+++ removing error +++")
 	console.log(removeme);
-	console.log(req);
+	if(removeme.provider == 'twitter'){
+		client.keys('*le-'+removeme.id,function(err,value){
+			if(value){
+				if(value.length > 0){
+					var errorGen = value[0].search('female-');
+					if(errorGen >= 0){
+						removeme.gender = 'female';
+					}else{
+						removeme.gender = 'male';
+					}
+				}
+			}
+		});
+	}
 	var again = {};
 	again.id = removeme.id;
 	again.username = removeme.username;
 	again.gender = removeme.gender;
 	again.photourl = removeme.photourl;
 	again.provider = removeme.provider;
-	console.log(again);
-	if(removeme.provider == 'twitter'){
-		again.gender = 'female';
-		client.srem("visitor:female",JSON.stringify(again));
-		again.gender = 'male';
-		client.srem("visitor:male",JSON.stringify(again));
-		client.smembers("visitor:female",function(err,datas){
-			if(datas.length > 0){
-				res.render('error');
-			}
-			else{
-				client.smembers("visitor:male",function(err,datax){
-					if(datax.length > 0){
-						res.render('error');
-					}else{
-						res.render('error2');
-					}
-				});
-			}
-		});
-	}else{
-		client.srem("visitor:"+removeme.gender,JSON.stringify(again));
-		client.smembers("visitor:female",function(err,datas){
-			if(datas.length > 0){
-				res.render('error');
-			}
-			else{
-				client.smembers("visitor:male",function(err,datax){
-					if(datax.length > 0){
-						res.render('error');
-					}else{
-						res.render('error2');
-					}
-				});
-			}
-		});
-		
-	}
+	client.del(removeme.gender+'-'+removeme.id,JSON.stringify(again));
+	client.del('chatted:'+removeme.id);
+	client.del('last:'+removeme.id);
+	res.render('error');
 });
 
 app.get('/authfb',
@@ -266,10 +228,11 @@ app.get('/authfb/callback',
 });
 
 app.get('/authtw/callback',
-		passport.authenticate('twitter', { failureRedirect: '/' }),
-		function(req, res) {
-			res.redirect('/option');
-});
+	passport.authenticate('twitter', { failureRedirect: '/' }),
+	function(req, res) {
+		res.redirect('/option');
+	}
+);
 
 app.get('/subscribe2',function(req,res){
 	console.log("+++++SUBSCRIBE+++++");
@@ -288,85 +251,88 @@ app.get('/option',function(req,res){
 	res.render('option',{profile:req.session.passport.user.gender,provider:req.session.passport.user.provider});
 });
 app.get('/loading',function(req,res){
-	//req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
-	//req.user.codename = req.query.codename || req.user.codename;
-	//res.render('loading',{user: req.user});
-	console.log("XXX---------------- req.user.gender -----------------XXX");
-	console.log(req.user.gender);
-	console.log("XXX---------------- req.user._json.gender -----------------XXX");
-	console.log(req.user._json.gender);
-	console.log("XXX---------------- req.query gender - m -----------------XXX");
-	console.log(req.query["gender-m"]);
-	console.log("XXX---------------- req.query gender - f -----------------XXX");
-	console.log(req.query["gender-f"]);
-	console.log("xxXX checking if req.data exist XXxx");
-	console.log(req.data);
-	//if(!req.query["gender-m"] && !req.query["gender-f"])
-	var genderStore = new Array();
+	console.log(req.user);
+	console.log("------------------------");
+	console.log(req.query);
 	if(req.user.provider == 'facebook'){
 		console.log("XXX---------------- FACEBOOK GENDER DEFAULT -----------------XXX");
 		req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
+		req.user.codename = req.query.codename || req.user.codename;
+		res.render('loading',{user: req.user});
 	}else{
 		if(rotationGame == 0){
 			console.log("XXX---------------- TWITTER GENDER DEFAULT -----------------XXX");
-			req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
+			console.log(req.query["gender-m"]);
+			console.log(req.query["gender-f"]);
+			console.log(req.user._json.gender);
+			if(req.query["gender-m"]){
+				req.user.gender = req.query["gender-m"];
+			}
+			if(req.query["gender-f"]){
+				req.user.gender = req.query["gender-f"];
+			}
+			if(req.user._json.gender){
+				req.user.gender = req.user._json.gender;
+			}
+			req.user.codename = req.query.codename || req.user.codename;
+			res.render('loading',{user: req.user});
 		}
 		else{
 			console.log("XXX---------------- TWITTER GENDER AUTOMATIC -----------------XXX");
-			//req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
-			client.smembers("visitor:"+req.user.gender,function(err,datas){
-				datas.forEach(function(data){
-					if(req.user.id == JSON.parse(data).id){
-						genderStore.push(JSON.parse(data).gender);
+			if(req.user.gender == 'male' || req.user.gender == 'female'){
+				console.log(req.user.gender);
+				console.log("it goes to this location");
+				res.render('loading',{user: req.user});
+			}else{
+				console.log("null goes to this location");
+				client.keys('*le-'+req.user.id,function(err,keys){
+					console.log("twitter checking..");
+					console.log(keys);
+					if(keys){
+						if(keys.length > 0){
+							var locateGen = keys[0].search('female-');
+							console.log(locateGen);
+							if(locateGen >= 0){
+								req.user.gender = 'male';
+								req.user.codename = req.query.codename || req.user.codename;
+								res.render('loading',{user: req.user});
+							}else{
+								req.user.gender = 'female';
+								req.user.codename = req.query.codename || req.user.codename;
+								res.render('loading',{user: req.user});
+							}
+						}
+					}
+					else{
+						console.log("problem occur");
 					}
 				});
-			});
-			if(genderStore.length > 0){
-				console.log("++ condition in gender selection ++");
-				req.user.gender = genderStore[0];
-			}
-			else{
-				console.log("++ condition in gender selection used old method ++");
-				req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
 			}
 		}
 	}
-
-	req.user.codename = req.query.codename || req.user.codename;
-	console.log("XXX---------------- LOADING -----------------XXX");
-	console.log(req.user._json);
-	console.log("XXX------------------------------------------XXX");
-	console.log(req.user.gender);
-	console.log("XXX------------------------------------------XXX");
-	res.render('loading',{user: req.user});
 });
 
 app.get('/ranking',function(req,res){
-	//var user = req.user;
-	//client.smembers('visitor:'+user.id,function(err,datas){
-	//	console.log("+++++Data Content Query+++++");
-	//	console.log(datas);
-	//	var likes = new Array();
-	//	datas.forEach(function(data){
-	//		likes.push(JSON.parse(data));
-	//	});
-	//	var up = {};
-	//	up.id = user.id;
-	//	up.username = user.username;
-	//	up.gender = user.gender;
-	//	up.photourl = user.photourl;
-	//	up.provider = user.provider;
-	//	up.codename = user.codename;
-	//	console.log("+++++UP content+++++");
-	//	console.log(up);
-	//	res.render('ranking',{user:up,chatmate:likes});
-	//});
 	var user = req.user;
 	console.log(req.user);
 	var likes = new Array();
 	var finalLikes = new Array();
 
 	var finishedRequest = function(){
+		if(user.provider == 'twitter'){
+			client.keys('*-'+user.id,function(err,value){
+				if(value){
+					if(value[0].length > 0){
+						var errorGen = value[0].search('female-');
+						if(errorGen >= 0){
+							user.gender = 'female';
+						}else{
+							user.gender = 'male';
+						}
+					}
+				}
+			});
+		}
 		var up = {};
 		up.id = user.id;
 		up.username = user.username;
@@ -375,26 +341,20 @@ app.get('/ranking',function(req,res){
 		up.provider = user.provider;
 		up.codename = user.codename;
 		console.log("+++++UP content+++++");
-		console.log(up);
+		//console.log(up);
 		console.log("+++++UP content+++++");
-		console.log(finalLikes);
+		//console.log(finalLikes);
 		res.render('ranking',{user:up,chatmate:finalLikes});
 	}
 	
 	client.smembers('visitor:'+user.id,function(err,datas){
-		console.log("+++++Data Content Query+++++");
-		console.log(datas);
-		console.log(datas.length);
 		var countData;
 		countData = datas.length;
 		console.log("xxXXxx Count Content Value xxXXxx");
-		console.log(countData);
 		if(countData > 0){
 			datas.forEach(function(data){
 				console.log("xxXXxx PEOPLE WHO LIKE YOU");
 				console.log(data);
-				//countData = data.length;
-				//console.log(countData);
 				likes.push(data);
 				client.smembers('visitor:'+JSON.parse(data).id,function(err,liked){
 					if(!liked[0]){
@@ -424,17 +384,17 @@ app.get('/ranking',function(req,res){
 		}else{
 			finishedRequest();
 		}
-			
 	});
 });
 
 app.get('/chat/:room',function(req,res){
 	console.log("******req.params.room******");
-	console.log(req.params.room);
+	//console.log(req.params.room);
+	rotationGame+=1;
 	client.smembers(req.params.room,function(err,data){
-		console.log(err);
-		console.log(data);
-		if(!data[0]){
+		//console.log(err);
+		//console.log(data);
+		if(err){
 			data = {};
 		}
 		else{
@@ -444,65 +404,126 @@ app.get('/chat/:room',function(req,res){
 		console.log(req.user.photourl);
 		var container;
 		var listgender = new Array();
-		if(req.user.gender == data.male.gender){
-			container = data.female.gender;
-		}else{
-			container = data.male.gender;
-		}
-		client.lrange('last:'+req.user.id,1,1,function(err,chat){
-		client.smembers("visitor:"+container,function(err,results){
-			console.log("****LIST of Opposite Gender****");
-			console.log(listgender);
-			results.forEach(function(key){
-				console.log(key);
-				console.log(JSON.parse(key));
-				var checkChat = JSON.parse(key);
-				if(checkChat.id == chat){
-					listgender.push(key);
+		if(req.user.provider == 'twitter'){
+			console.log("goes to this location due to twitter account");
+			console.log(req.user.id);
+			client.keys('*le-'+req.user.id,function(err,result){
+				console.log(result[0]);
+				if(result){
+					if(result.length > 0){
+						var trimGet = result[0].search('female-');
+						console.log(trimGet);
+						if(trimGet >= 0){
+							req.user.gender = 'female';
+						}else{
+							req.user.gender = 'male';
+						}
+					}
 				}
+				var up = {};
+				console.log("****GENDER IF Twitter USE****");
+				up.id = req.user.id;
+				up.username = req.user.username;
+				up.gender = req.user.gender;
+				up.photourl = req.user.photourl;
+				up.provider = req.user.provider;
+				up.codename = req.user.codename;
+				client.lrange('last:'+req.user.id,1,1,function(err,value){
+					if(err){
+						console.log("Error found!!");
+						
+					}
+					//listgender = JSON.parse(value);
+					console.log("$$$$$ checking if value.length have content $$$$$")
+					console.log(value.length);
+					//if()
+					console.log("****LIST of Opposite Gender****");
+					console.log(listgender);
+					if(value.length > 0){
+						if(req.user.gender == 'male'){
+							console.log("search female");
+							client.get('female-'+value,function(err,values){
+								console.log(values);
+								console.log(JSON.parse(values));
+								res.render('chat',{user: up, room: data, listgen: values});
+							});
+						}else{
+							console.log("search male");
+							client.get('male-'+value,function(err,values){
+								console.log(values);
+								console.log(JSON.parse(values));
+								res.render('chat',{user: up, room: data, listgen: values});
+							});
+						}
+					}
+					else{
+						console.log("yyyyyyyy null value yyyyyyyy");
+						listgender = value;
+						res.render('chat',{user: up, room: data, listgen: listgender});
+					}
+				});
 			});
-			//outside the smembers put dated 9-4-13 10:22am
-			console.log("****Complete List of Opposite Gender****");
-			console.log(listgender);
+		}else{
 			var up = {};
-			//if(req.user.provider=='twitter'){
-			//gender = req.user.gender;
 			console.log("****GENDER IF Twitter USE****");
-			//console.log(gender);
-			// console.log("data."+gender+".gender");
-			// up.gender = "data."+gender+".gender"
-			//}
-			//else{
-			//}
 			up.id = req.user.id;
 			up.username = req.user.username;
 			up.gender = req.user.gender;
 			up.photourl = req.user.photourl;
 			up.provider = req.user.provider;
 			up.codename = req.user.codename;
-			res.render('chat',{user: up, room: data, listgen: listgender});
-
-		});
-		});
+			client.lrange('last:'+req.user.id,1,1,function(err,value){
+				if(err){
+					console.log("Error found!!");
+					
+				}
+				//listgender = JSON.parse(value);
+				console.log("$$$$$ checking if value.length have content $$$$$")
+				console.log(value.length);
+				//if()
+				console.log("****LIST of Opposite Gender****");
+				console.log(listgender);
+				if(value.length > 0){
+					if(req.user.gender == 'male'){
+						console.log("search female");
+						client.get('female-'+value,function(err,values){
+							console.log(values);
+							console.log(JSON.parse(values));
+							res.render('chat',{user: up, room: data, listgen: values});
+						});
+					}else{
+						console.log("search male");
+						client.get('male-'+value,function(err,values){
+							console.log(values);
+							console.log(JSON.parse(values));
+							res.render('chat',{user: up, room: data, listgen: values});
+						});
+					}
+				}
+				else{
+					console.log("yyyyyyyy null value yyyyyyyy");
+					listgender = value;
+					res.render('chat',{user: up, room: data, listgen: listgender});
+				}
+			});
+		}
 	});
-	
 });
 
 app.io.set('log level', 1);
 app.io.set('authorization', function (handshakeData, callback) {
 	if(handshakeData.headers.cookie){
 	//	console.log(handshakeData.headers.cookie);
-	//	var cookies = cookieParser(cookie.parse(handshakeData.headers.cookie), "peekawoo"),
 		console.log("xxXX Cookie XXxx");
-		console.log(handshakeData.headers.cookie);
+		//console.log(handshakeData.headers.cookie);
 		var cookies = handshakeData.headers.cookie.replace("'","").split(";");
 		console.log("declaration");
-		console.log(cookies);
+		//console.log(cookies);
 		console.log("checking cookies");
-		console.log(cookies.length);
+		//console.log(cookies.length);
 		for(var i = 0; i<cookies.length; i++){
 			var checkMe = cookies[i].search("peekawoo=");
-			console.log(checkMe);
+			//console.log(checkMe);
 			if(checkMe >= 0){
 				console.log("i'm at Array number "+i+" location "+checkMe);
 				var sampleMe = cookies[i].split("=");
@@ -518,11 +539,11 @@ app.io.set('authorization', function (handshakeData, callback) {
 			}
 		}
 		console.log("here is the perfect result");
-		console.log(sampleMe);
+		//console.log(sampleMe);
 		sid = sampleMe[0].replace("s%3A","").split(".")[0];
 		console.log("checking cookies");
-		console.log(sid);
-		console.log(sampleMe);
+		//console.log(sid);
+		//console.log(sampleMe);
 		sessionStore.load(sid, function(err,session){
 			if(err || !session){
 				return callback("Error retrieving session!",false);
@@ -550,118 +571,29 @@ app.io.set('store', new express.io.RedisStore({
 
 app.io.sockets.on('connection',function(socket){
 	console.log("xxXX connecting clients . . . XXxx");
-	console.log(socket);
-	console.log(socket.handshake);
+	//console.log(socket);
+	//console.log(socket.handshake);
 	console.log("xxX pushing socket.id Xxx");
 	var userx = socket.handshake.peekawoo.user;
 	var usery = socket.handshake.peekawoo.sessionid;
-	var countQty = false;
-	console.log(myArray.length);
-	if(myArray.length <= 0){
-		myArray.push(usery);
-		var list = {}; 
-		list.user = usery;
-		list.connected = true;
-		haveData.push(list);
-		console.log(haveData);
-		countUserInside++;
+	if(userx.gender){
+		client.persist(userx.gender+'-'+userx.id);
 	}
-	else {
-		for(var i = 0;i<myArray.length;i++){
-			console.log(myArray.length);
-			var searchUser = myArray[i].search(usery);
-			console.log(myArray[i]);
-			console.log(searchUser);
-			if(searchUser >=0){
-				for(var j = 0;j<haveData.length; j++){
-					var checkingVal = haveData[j];
-					if(checkingVal.user == usery){
-						h = 1;
-						countQty = true;
-						haveData[j].connected = true;
-						console.log("im connected");
-						console.log(haveData[j].connected);
-						break;
-					}
-				}
-				break;
-			}
-		}
-		if(!countQty){
-			myArray.push(socket.handshake.peekawoo.sessionid);
-			var listnew = {}; 
-			listnew.user = usery;
-			listnew.connected = true;
-			haveData.push(listnew);
-			countUserInside++;
-			console.log(haveData);
-		}
-	}
-
 	console.log("xxXX Normal Data came here XXxx");
 	console.log(haveData);
 	console.log(myArray);
 	socket.on('disconnect',function(){
-		var disconnectData;
-		for(var k = 0; k<haveData.length;k++){
-			disconnectData = haveData[k];
-			if(disconnectData.user == usery){
-				disconnectData.connected = false;
-				break;
-			}
-		}
-		console.log("out ne me");
-		console.log("deletion of files");
-		console.log(haveData);
-		var clockTick = setTimeout(function(){
-			console.log(disconnectData);
-			if(disconnectData.user == usery && disconnectData.connected == false){
-				console.log(disconnectData.user + ' connection ' + disconnectData.connected);
-				for(var l = 0;l<myArray.length;l++){
-					var removeUser = myArray[l].search(usery);
-					if(removeUser >= 0){
-						myArray.splice(l,1);
-					}
-				}
-				console.log(haveData.length);
-				for(var m = 0;m<haveData.length;m++){
-					var removeDataHere = haveData[m];
-					if(removeDataHere.user == usery && removeDataHere.connected == false){
-						haveData.splice(m,1);
-					}
-				}
-				countUserInside--;
-				var removing = {};
-				removing.id = userx.id;
-				removing.username = userx.username;
-				removing.gender = userx.gender;
-				removing.photourl = userx.photourl;
-				removing.provider = userx.provider;
-				console.log(removing);
-				//if(removeme.provider == 'twitter'){
-				//	removing.gender = 'female';
-				//	client.srem("visitor:female",JSON.stringify(removing));
-				//	removing.gender = 'male';
-				//	client.srem("visitor:male",JSON.stringify(removing));
-				//}else{
-					client.srem("visitor:"+removing.gender,JSON.stringify(removing));
-				//}
-			}
-			console.log("xxXX After removing of data XXxx");
-			console.log(myArray);
-			console.log(haveData);
-			console.log("xxXX ====================== XXxx");
-		},60000);
+		console.log("xxxxxxxxx disconnecting active client xxxxxxxx");
+		client.expire(userx.gender+'-'+userx.id,60);
 	});
 
-	
 	console.log("===================");
-	console.log(socket.handshake.peekawoo.user);
+	//console.log(socket.handshake.peekawoo.user);
 	console.log("===================");
 	var user = socket.handshake.peekawoo.user;
 	app.io.route('join',function(req){
-		console.log("++++checking req.data.room ++++");
-		console.log(req.data.room);
+		//console.log("++++checking req.data.room ++++");
+		//console.log(req.data.room);
 		req.io.join(req.data.room);
 		app.io.room(req.data.room).broadcast('roomtopic',topic[Math.floor(Math.random() * topic.length)]);
 	});
@@ -676,7 +608,7 @@ app.io.sockets.on('connection',function(socket){
 		again.gender = removehere.gender;
 		again.photourl = removehere.photourl;
 		again.provider = removehere.provider;
-		console.log(again);
+		//console.log(again);
 		if(removehere.provider == 'twitter'){
 			again.gender = 'female';
 			client.srem("visitor:female",JSON.stringify(again));
@@ -689,9 +621,9 @@ app.io.sockets.on('connection',function(socket){
 	
 	app.io.route('leave',function(req){
 		console.log("++++signout req.data.room++++");
-		console.log(req.data.room);
+		//console.log(req.data.room);
 		console.log("++++signout req.data.user++++");
-		console.log(req.data.user);
+		//console.log(req.data.user);
 		console.log("+++++removing gender and room declare+++++");
 		var removegender;
 		if(req.data.user.id == req.data.room.male.id){
@@ -700,12 +632,14 @@ app.io.sockets.on('connection',function(socket){
 			removegender = req.data.room.female;
 		}
 		var removeroom = req.data.room;
-		console.log(removegender);
-		console.log(removeroom);
+		//console.log(removegender);
+		//console.log(removeroom);
 		console.log("+++++removing gender+++++");
 		delete removegender.codename;
-		console.log(removegender);
+		//console.log(removegender);
 		client.srem("visitor:"+removegender.gender,JSON.stringify(removegender));
+		client.del("chatted:"+removegender.id);
+		client.del("last:"+removegender.id);
 		client.del(removeroom.name);
 		console.log("@@@@@ D O N E  R E M O V I N G @@@@@");
 	});
@@ -714,12 +648,12 @@ app.io.sockets.on('connection',function(socket){
 		var user = req.data.user;
 		var mate = req.data.mate;
 		console.log("====user value====");
-		console.log(user);
+		//console.log(user);
 		console.log("====remove msg====");
 		delete req.data.user.msg;
-		console.log(user);
+		//console.log(user);
 		console.log("====mate value====");
-		console.log(mate);
+		//console.log(mate);
 		console.log("====remove if exist====");
 		client.srem("visitor:"+mate.id,JSON.stringify(user));
 		console.log("====add user to mate====");
@@ -730,19 +664,14 @@ app.io.sockets.on('connection',function(socket){
 		var user = req.data.user;
 		var mate = req.data.mate;
 		console.log("====user value====");
-		console.log(user);
+		//console.log(user);
 		console.log("====remove msg====");
 		delete req.data.user.msg;
-		console.log(user);
+		//console.log(user);
 		console.log("====mate value====");
-		console.log(mate);
+		//console.log(mate);
 		console.log("====Delete me in my chatmate====");
-		//client.smembers(mate.id,function(callback){
-		//	console.log("====callback value====");
-		//	console.log(callback);
-		//});
 		client.srem("visitor:"+mate.id,JSON.stringify(user));
-		//client.sadd("visitor:"+mate.id,JSON.stringify(user));
 	});
 	
 	app.io.route('my msg',function(req){
@@ -753,38 +682,108 @@ app.io.sockets.on('connection',function(socket){
 		async.auto({
 			checkIfExist : function(callback){
 				console.log("checking if goes in here");
-				console.log(req);
+				console.log(req.data);
 				var gender = JSON.parse(req.data);
-				var me = {};
-				me.id = gender.id;
-				me.username = gender.username;
-				me.gender = gender.gender;
-				me.photourl = gender.photourl;
-				me.provider = gender.provider;
-				client.sismember("visitor:"+me.gender,JSON.stringify(me),callback);
+				console.log(gender.gender);
+				if(gender.provider == 'twitter'){
+					if(gender.gender != 'male' || gender.gender != 'female'){
+						client.keys('*le-'+gender.id,function(err,value){
+							console.log(value);
+							if(value.length > 0){
+								var getValue = value[0].search('female-');
+								if(getValue >= 0){
+									gender.gender = 'female';
+								}else{
+									gender.gender = 'male';
+								}
+							}
+						});
+						var me = {};
+						me.id = gender.id;
+						me.username = gender.username;
+						me.gender = gender.gender;
+						me.photourl = gender.photourl;
+						me.provider = gender.provider;
+						console.log(me);
+						client.exists(me.gender+'-'+me.id,callback);
+					}
+					else{
+						var me = {};
+						me.id = gender.id;
+						me.username = gender.username;
+						me.gender = gender.gender;
+						me.photourl = gender.photourl;
+						me.provider = gender.provider;
+						client.exists(me.gender+'-'+me.id,callback);
+					}
+				}else{
+					var me = {};
+					me.id = gender.id;
+					me.username = gender.username;
+					me.gender = gender.gender;
+					me.photourl = gender.photourl;
+					me.provider = gender.provider;
+					client.exists(me.gender+'-'+me.id,callback);
+				}
 			},
 			setMember : function(callback){
-				console.log("checking if goes in here");
+				console.log("checking if goes in here member");
 				var user = JSON.parse(req.data);
-				var up = {};
-				up.id = user.id;
-				up.username = user.username;
-				up.gender = user.gender;
-				up.photourl = user.photourl;
-				up.provider = user.provider;
-				client.srem("visitor:"+user.gender,JSON.stringify(up));
-				client.sadd("visitor:"+user.gender,JSON.stringify(up));
-				callback(null,true);
-				
-				console.log("+++++++checking+++++++");
-				console.log(up);
-				console.log("+++++++checking+++++++");
+				console.log(req.data);
+				console.log(user.gender);
+				if(user.provider == 'twitter'){
+					if(!user.gender){
+						console.log("member twitter");
+						console.log(user.gender);
+						client.keys('*le-'+user.id,function(err,value){
+							console.log(value);
+							if(value.length > 0){
+								var getValue = value[0].search('female-');
+								if(getValue >= 0){
+									user.gender = 'female';
+								}else{
+									user.gender = 'male';
+								}
+							}
+							var me = {};
+							me.id = user.id;
+							me.username = user.username;
+							me.gender = user.gender;
+							me.photourl = user.photourl;
+							me.provider = user.provider;
+							client.del(user.gender+"-"+user.id,JSON.stringify(me),redis.print);
+							client.set(user.gender+"-"+user.id,JSON.stringify(me),redis.print);
+							callback(null,true);
+						});
+					}
+					else{
+						var me = {};
+						me.id = user.id;
+						me.username = user.username;
+						me.gender = user.gender;
+						me.photourl = user.photourl;
+						me.provider = user.provider;
+						client.del(user.gender+"-"+user.id,JSON.stringify(me),redis.print);
+						client.set(user.gender+"-"+user.id,JSON.stringify(me),redis.print);
+						callback(null,true);
+					}
+				}else{
+					var up = {};
+					up.id = user.id;
+					up.username = user.username;
+					up.gender = user.gender;
+					up.photourl = user.photourl;
+					up.provider = user.provider;
+					client.del(user.gender+"-"+user.id,JSON.stringify(up),redis.print);
+					client.set(user.gender+"-"+user.id,JSON.stringify(up),redis.print);
+					callback(null,true);
+				}
 			},
 			getMaleVisitor : function(callback){
-				client.smembers("visitor:male",callback);
+				client.keys('male-*',callback);
 			},
 			getFemaleVisitor : function(callback){
-				client.smembers("visitor:female",callback);
+				client.keys('female-*',callback);
 			}
 		},function(err,result){
 			console.log(result);
@@ -798,16 +797,10 @@ app.io.sockets.on('connection',function(socket){
 				console.log("xxXXxx IM ALREADY HERE BEFORE xxXXxx");
 				newuser = false;
 			}
-			//Change condition if male == female
+			
+			
+			
 			if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
-				//cycle_game = Number((result.getMaleVisitor.length + result.getFemaleVisitor.length) /2) ;
-				//if(cycle == cycle_game){
-				//	game_lock = true;
-				//}
-				//else{
-				//	cycle = cycle_game;
-				//	game_lock = false;
-				//}
 				console.log("xxXXxx NEWUSER Result xxXXxx");
 				console.log(newuser);
 				if(newuser){
@@ -824,103 +817,413 @@ app.io.sockets.on('connection',function(socket){
 	});
 });
 
-start_chat = function(vf,vm,cycle){
+start_chat = function(vf,vm,cflist,cmlist,cycle){
 	console.log("@@@@@@@@@@@@@ Chat start");
 	
 	async.auto({
 		group_user : function(){
 			var rooms = new Array();
-			var new_vm = new Array();
-			var lowestLength = Math.min(vf.length,vm.length)
+			var lowestLength = Math.min(vf.length,vm.length);
+			var rotationTurn = false;
+			var priority;
+			var maleList = cmlist;
+			var femaleList = cflist;
+			var returnMale = new Array();
+			var returnFemale = new Array();
+			var noFemalePartner = new Array();
+			var noMalePartner = new Array();
+			cmlist.forEach(function(returnAgain){
+				returnMale.push(returnAgain);
+			});
+			cflist.forEach(function(returnAgain2){
+				returnFemale.push(returnAgain2);
+			});
+			console.log("return male and female");
+			console.log(returnMale);
+			console.log(returnFemale);
+			if(vf.length == lowestLength){
+				priority = "female";
+			}else{
+				priority = "male";
+			}
 			console.log(lowestLength);
-			for(var i=0; i<lowestLength; i++){
-				if(vm[i+1]){
-					var y = i + 1;
-					if(y < lowestLength){
-						new_vm.push(vm[i+1]);
-					}
-				}
-				console.log("female length");
-				console.log(vf.length);
-				console.log("female content");
-				console.log(vf[i]);
-				console.log("male content");
-				console.log(vm[i]);
-				if(vf[i] && vm[i]){
-					var vfs = JSON.parse(vf[i]);
-					var vms = JSON.parse(vm[i]);
-					var room = {
-						name : vms.id + "-" + vfs.id,
-						male : vms,
-						female : vfs
-					};
-					console.log("++++++getting blank room++++++");
-					console.log(room);
-					console.log("++++++++++++++++++++++++++++++");
-					//client.srem(room.name,JSON.stringify(room),function(){
-						
-					//});
-					client.srem(room.name,JSON.stringify(room));
-					client.sadd(room.name,JSON.stringify(room));
-					rooms.push(room);
-					console.log("++++Start Conversation++++");
-					console.log(room);
-					console.log("++++++++++++++++++++++++++");
-					client.lpush('last:'+vfs.id,vms.id);
-					client.lpush('last:'+vms.id,vfs.id);
-					app.io.broadcast(vfs.id, room);
-					app.io.broadcast(vms.id, room);
-					
-					
-				}
-				else{
-					if(vf[i]){
-						var vfs = JSON.parse(vf[i]);
-						app.io.broadcast(vfs.id, false);
-						console.log("kickout: " + vfs.id);
-					}
-					if(vm[i]){
-						var vms = JSON.parse(vm[i]);
-						console.log("kickout: " + vms.id);
-						app.io.broadcast(vms.id, false);
-					}
-				}
+			console.log("female length");
+			console.log(vf.length);
+			console.log("female list content");
+			console.log(cflist);
+			console.log("male list content");
+			console.log(cmlist);
+			//var vfs = JSON.parse(vf[i]);
+			//var vms = JSON.parse(vm[i]);
+			console.log("json parse of vm and vf");
+			//console.log(vfs);
+			//console.log(vms);
+			if(priority == "female"){
+				vf.forEach(function(pvf){
+					var pvfx = JSON.parse(pvf);
+					console.log("female is the priority");
+					//var trimMaleList = maleList;
+					//var loopStop = false;
+					client.smembers("chatted:"+pvfx.id,function(err,chats){
+						if(!chats || chats.length == 0){
+							console.log("xxxxXXXX Female IF CONDITION XXxxxx");
+							var loopStop = false;
+							//vm.forEach(function(guyz){
+							for(var i = 0;i<vm.length;i++){
+								console.log("loop i value");
+								console.log(i);
+								console.log(loopStop);
+								if(!loopStop){
+									console.log("list if guyz in vm");
+									var vmx = JSON.parse(vm[i]);
+									console.log(vmx);
+									console.log("if false goes here");
+									var checkIfAvailable = maleList.indexOf(vmx.gender+'-'+vmx.id);
+									console.log("maleList content");
+									console.log(maleList);
+									console.log("checkAvailable content");
+									console.log(checkIfAvailable);
+									if(checkIfAvailable >= 0){
+										var room = {
+												name : vmx.id + "-" + pvfx.id,
+												male : vmx,
+												female : pvfx
+											}
+										client.del(room.name,JSON.stringify(room));
+										client.sadd(room.name,JSON.stringify(room));
+										console.log("++++++getting blank room++++++");
+										console.log(room);
+										console.log("++++++++++++++++++++++++++++++");
+										rooms.push(room);
+										console.log("++++Start Conversation++++");
+										console.log(rooms);
+										console.log("++++++++++++++++++++++++++");
+										console.log("before female remove");
+										console.log(pvfx);
+										console.log(femaleList);
+										var removeInListFemale = femaleList.indexOf('female-'+pvfx.id);
+										femaleList.splice(removeInListFemale,1);
+										console.log("after removing maleList");
+										console.log(femaleList);
+										console.log("before male remove");
+										console.log(vmx);
+										console.log(maleList);
+										var removeInListMale  = maleList.indexOf('male-'+vmx.id);
+										maleList.splice(removeInListMale,1);
+										console.log("after removing maleList");
+										console.log(maleList);
+										client.sadd("chatted:"+pvfx.id,vmx.id);
+										client.sadd("chatted:"+vmx.id,pvfx.id);
+										client.lpush("last:"+pvfx.id,vmx.id);
+										client.lpush("last:"+vmx.id,pvfx.id);
+										app.io.broadcast(pvfx.id, room);
+										app.io.broadcast(vmx.id, room);
+										loopStop = true;
+										rotationTurn = true;
+										break;
+									}
+								}
+							}
+						}
+						else{
+							console.log("xxxxXXXX Female ELSE CONDITION XXxxxx");
+							var trimMaleList = new Array();
+							maleList.forEach(function(copyMale){
+								trimMaleList.push(copyMale);
+							});
+							console.log(trimMaleList);
+							var qtyOfChatmate = chats.length;
+							chats.forEach(function(chat){
+								console.log("else content chat");
+								console.log(chat);
+								var ifAlreadyExist = trimMaleList.indexOf('male-'+chat);
+								console.log(ifAlreadyExist);
+								if(ifAlreadyExist >= 0){
+									trimMaleList.splice(ifAlreadyExist,1);
+								}
+								console.log("trimmalelist content after splice");
+								console.log(trimMaleList);
+								console.log(maleList);
+								qtyOfChatmate-=1;
+							});
+							console.log("trimmalelist final content");
+							console.log(trimMaleList);
+							console.log(trimMaleList[0]);
+							console.log(maleList);
+							if(qtyOfChatmate <= 0){
+								console.log("if true done of removing chatted");
+								console.log(trimMaleList.length);
+								if(trimMaleList.length > 0){
+									var loopStop = false;
+									for(var k=0;k<vm.length;k++){
+										console.log("value of k");
+										console.log(k);
+										console.log(loopStop);
+										if(!loopStop){
+											var vmx = JSON.parse(vm[k]);
+											console.log("value of vmx");
+											console.log(vmx);
+											var splitMaleId = trimMaleList[0].replace('male-','');
+											console.log("content of splitMlaeId after replaced trimMale");
+											console.log(splitMaleId);
+											if(vmx.id == splitMaleId){
+												var room = {
+														name : vmx.id + "-" + pvfx.id,
+														male : vmx,
+														female : pvfx
+													}
+												client.del(room.name,JSON.stringify(room));
+												client.sadd(room.name,JSON.stringify(room));
+												console.log("++++++getting blank room++++++");
+												console.log(room);
+												console.log("++++++++++++++++++++++++++++++");
+												rooms.push(room);
+												console.log("++++Start Conversation++++");
+												console.log(rooms);
+												console.log("++++++++++++++++++++++++++");
+												console.log("before female remove");
+												console.log(pvfx);
+												console.log(femaleList);
+												var removeInListFemale = femaleList.indexOf('female-'+pvfx.id);
+												femaleList.splice(removeInListFemale,1);
+												console.log("after removing maleList");
+												console.log(femaleList);
+												console.log("before male remove");
+												console.log(vmx);
+												console.log(maleList);
+												var removeInListMale  = maleList.indexOf('male-'+vmx.id);
+												maleList.splice(removeInListMale,1);
+												console.log("after removing maleList");
+												console.log(maleList);
+												client.sadd("chatted:"+pvfx.id,vmx.id);
+												client.sadd("chatted:"+vmx.id,pvfx.id);
+												client.lpush("last:"+pvfx.id,vmx.id);
+												client.lpush("last:"+vmx.id,pvfx.id);
+												app.io.broadcast(pvfx.id, room);
+												app.io.broadcast(vmx.id, room);
+												loopStop = true;
+												rotationTurn = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+				});
+			}else{
+				vm.forEach(function(pvm){
+					var pvmx = JSON.parse(pvm);
+					console.log("male is the priority");
+					client.smembers("chatted:"+pvmx.id,function(err,chats){
+						if(!chats || chats.length == 0){
+							console.log("xxxxXXXX Male IF CONDITION XXxxxx");
+							var loopStop2 = false;
+							for(var j=0;j<vf.length;j++){
+								console.log("loop j value");
+								console.log(j);
+								console.log(loopStop2);
+								if(!loopStop2){
+									console.log("list if girlz in vm");
+									var vfx = JSON.parse(vf[j]);
+									console.log(vfx);
+									console.log("if false goes here male");
+									var checkIfAvailable = femaleList.indexOf(vfx.gender+'-'+vfx.id);
+									console.log("femaleList content");
+									console.log(femaleList);
+									console.log("checkIfAvailable content");
+									console.log(checkIfAvailable);
+									if(checkIfAvailable >= 0){
+										var room = {
+												name : pvmx.id + "-" + vfx.id,
+												male : pvmx,
+												female : vfx
+											}
+										client.del(room.name,JSON.stringify(room));
+										client.sadd(room.name,JSON.stringify(room));
+										console.log("++++++getting blank room++++++");
+										console.log(room);
+										console.log("++++++++++++++++++++++++++++++");
+										rooms.push(room);
+										console.log("++++Start Conversation++++");
+										console.log(rooms);
+										console.log("++++++++++++++++++++++++++");
+										console.log("before female remove");
+										console.log(vfx);
+										console.log(femaleList);
+										var removeInListFemale = femaleList.indexOf(JSON.stringify(vfx));
+										femaleList.splice(removeInListFemale,1);
+										console.log("after removing femaleList");
+										console.log(femaleList);
+										console.log("before male remove");
+										console.log(pvmx);
+										console.log(maleList);
+										var removeInListMale  = maleList.indexOf(JSON.stringify(pvmx));
+										maleList.splice(removeInListMale,1);
+										console.log("after removing maleList");
+										console.log(maleList);
+										client.sadd("chatted:"+vfx.id,pvmx.id);
+										client.sadd("chatted:"+pvmx.id,vfx.id);
+										client.lpush("last:"+vfx.id,pvmx.id);
+										client.lpush("last:"+pvmx.id,vfx.id);
+										app.io.broadcast(vfx.id, room);
+										app.io.broadcast(pvmx.id, room);
+										loopStop2 = true;
+										rotationTurn = true;
+										break;
+									}
+								}
+							}
+						}
+						else{
+							console.log("xxxxXXXX Male ELSE CONDITION XXxxxx");
+							var trimFemaleList = new Array();
+							femaleList.forEach(function(copyFemale){
+								trimFemaleList.push(copyFemale);
+							});
+							console.log(trimFemaleList);
+							var qtyOfChatmate = chats.length;
+							chats.forEach(function(chat){
+								console.log("else content chat male");
+								console.log(chat);
+								var ifAlreadyExist = trimFemaleList.indexOf('male-'+chat);
+								console.log(ifAlreadyExist);
+								if(ifAlreadyExist >= 0){
+									trimFemaleList.splice(ifAlreadyExist,1);
+								}
+								console.log("trimfemalelist content after splice");
+								console.log(trimFemaleList);
+								console.log(femaleList);
+								qtyOfChatmate-=1;
+							});
+							console.log("trimfemalelist final content");
+							console.log(trimFemaleList);
+							console.log(trimFemaleList[0]);
+							console.log(femaleList);
+							if(qtyOfChatmate <= 0){
+								console.log("if true done of removing chatted");
+								console.log(trimFemaleList.length);
+								if(trimFemaleList.length > 0){
+									var loopStop2 = false;
+									for(var m=0;m<vf.length;m++){
+										console.log("value of m");
+										console.log(m);
+										console.log(loopStop2);
+										if(!loopStop2){
+											var vfx = JSON.parse(vf[m]);
+											console.log("value of vmx");
+											console.log(vfx);
+											var splitFemaleId = trimFemaleList[0].replace('female-','');
+											console.log("content of splitFemaleId after replaced trimFemale");
+											console.log(splitFemaleId);
+											if(vfx.id == splitFemaleId){
+												var room = {
+														name : pvmx.id + "-" + vfx.id,
+														male : pvmx,
+														female : vfx
+													}
+												client.del(room.name,JSON.stringify(room));
+												client.sadd(room.name,JSON.stringify(room));
+												console.log("++++++getting blank room++++++");
+												console.log(room);
+												console.log("++++++++++++++++++++++++++++++");
+												rooms.push(room);
+												console.log("++++Start Conversation++++");
+												console.log(rooms);
+												console.log("++++++++++++++++++++++++++");
+												console.log("before female remove");
+												console.log(vfx);
+												console.log(femaleList);
+												var removeInListFemale = femaleList.indexOf(JSON.stringify(vfx));
+												femaleList.splice(removeInListFemale,1);
+												console.log("after removing femaleList");
+												console.log(femaleList);
+												console.log("before male remove");
+												console.log(pvmx);
+												console.log(maleList);
+												var removeInListMale  = maleList.indexOf(JSON.stringify(pvmx));
+												maleList.splice(removeInListMale,1);
+												console.log("after removing maleList");
+												console.log(maleList);
+												client.sadd("chatted:"+vfx.id,pvmx.id);
+												client.sadd("chatted:"+pvmx.id,vfx.id);
+												client.lpush("last:"+vfx.id,pvmx.id);
+												client.lpush("last:"+pvmx.id,vfx.id);
+												app.io.broadcast(vfx.id, room);
+												app.io.broadcast(pvmx.id, room);
+												loopStop2 = true;
+												rotationTurn = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+				});
 			}
-			for(var j=i;j<vm.length;j++){
-				if(vf[i]){
-					var vfs = JSON.parse(vf[i]);
-					app.io.broadcast(vfs.id, false);
-					console.log("kickout: " + vfs.id);
-				}
-				if(vm[i]){
-					var vms = JSON.parse(vm[i]);
-					console.log("kickout: " + vms.id);
-					app.io.broadcast(vms.id, false);
-				}
-			}
-			new_vm.push(vm[0]);
 			setTimeout(function(){
 				console.log("@@@@@CYCLE@@@@@");
 				console.log(cycle);
 				console.log(rooms.length);
-				cycle = cycle + 1;
-				if(cycle < rooms.length){
-					//start_chat(vf,new_vm,cycle);
-					console.log("XXXX HERE IT GOES inside XXXX");
-					cycle_turn = true;
-					start_chat(vf,new_vm,cycle);
+				cycle += 1;
+				var countCycle = 0;
+				if(vf.length == vm.length){
+					countCycle = vm.length;
+				}else{
+					var cycleMin = Math.min(vf.length,vm.length);
+					var cycleMax = Math.max(vf.length,vm.length);
+					var solutionCycle = cycleMin % cycleMax;
+					if(solutionCycle == 0){
+						countCycle = cycleMax;
+					}else if(solutionCycle == 1){
+						countCycle = (cycleMax + cycleMin) - 1;
+					}else if(solutionCycle == 2){
+						countCycle = (cycleMin * 2) + 1;
+					}else if(solutionCycle == 3){
+						var solveFormula = solutionCycle % cycleMin;
+						if(solveFormula == 0){
+							countCycle = cycleMin * 2;
+						}
+						else if(solveFormula == 1){
+							var countCycle = (cycleMin + cycleMax) - 1;
+						}
+						else if(solveFormula == 2){
+							var solveFormulas = solveFormula % solutionCycle;
+							if(solveFormulas == 0){
+								countCycle = (cycleMax + cycleMin) - 1;
+							}
+						}
+					}
 				}
-				else{
-					//game_lock = false;
-					//app.io.broadcast('game_stop', true);
+				if(newuser == false){
+					if(cycle < countCycle){
+						console.log("checking rotationTurn if there's a users chatting");
+						console.log(rotationTurn);
+						console.log("XXXX HERE IT GOES inside XXXX");
+						game_lock = true;
+						console.log(vf);
+						console.log(vm);
+						console.log(cflist);
+						console.log(cmlist);
+						console.log(returnMale);
+						console.log(returnFemale);
+						app.io.broadcast('game_stop', true);
+						var timer_reload = setTimeout(function(){
+							start_chat(vf,vm,returnFemale,returnMale,cycle);
+						},3000);
+					}else{
+						console.log("XXXX HERE IT GOES outside after set cycle XXXX");
+						game_lock = false;
+						app.io.broadcast('game_stop', true);
+					}
+				}else{
 					console.log("XXXX HERE IT GOES outside XXXX");
-					rotationGame = rotationGame + 1;
-					console.log("rotationGame");
-					console.log(rotationGame);
 					game_lock = false;
 					app.io.broadcast('game_stop', true);
 				}
-				
 			},120000);
 		},
 		
@@ -931,20 +1234,41 @@ start_chat = function(vf,vm,cycle){
 
 start_game = function(){
 	async.auto({
-		getMaleVisitor : function(callback){
-			client.smembers("visitor:male",callback);
+		getListMaleVisitor : function(callback){
+			client.keys('male-*',callback);
 		},
-		getFemaleVisitor : function(callback){
-			client.smembers("visitor:female",callback);
+		getListFemaleVisitor : function(callback){
+			client.keys('female-*',callback);
 		},
+		getMaleVisitor : ['getListMaleVisitor',function(callback,result){
+			console.log("function get male");
+			var cm = result.getListMaleVisitor;
+			console.log(result.getListMaleVisitor);
+			console.log(cm);
+			console.log(cm.length);
+			client.mget(cm,callback);
+		}],
+		getFemaleVisitor : ['getListFemaleVisitor',function(callback,result){
+			console.log("function get female");
+			var cf = result.getListFemaleVisitor;
+			console.log(result.getListFemaleVisitor);
+			console.log(cf);
+			console.log(cf.length);
+			client.mget(cf,callback);
+		}],
 		assignRoom : ['getMaleVisitor','getFemaleVisitor',function(callback,result){
 			var vf = result.getFemaleVisitor;
 			var vm = result.getMaleVisitor;
+			var cflist = result.getListFemaleVisitor;
+			var cmlist = result.getListMaleVisitor;
 			console.log("@@@@@@@@@@@@@ Room Assigned");
 			console.log(vf);
 			console.log(vm);
+			console.log(cflist);
+			console.log(cmlist);
 			console.log("@@@@@@@@@@@@@ Room Assigned");
-			start_chat(vf,vm,0);
+			newuser = false;
+			start_chat(vf,vm,cflist,cmlist,0);
 		}]
 	});
 };
