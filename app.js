@@ -279,6 +279,15 @@ app.get('/loading',function(req,res){
 		}
 		else{
 			console.log("XXX---------------- TWITTER GENDER AUTOMATIC -----------------XXX");
+			if(req.query["gender-m"]){
+				req.user.gender = req.query["gender-m"];
+			}
+			if(req.query["gender-f"]){
+				req.user.gender = req.query["gender-f"];
+			}
+			if(req.user._json.gender){
+				req.user.gender = req.user._json.gender;
+			}
 			if(req.user.gender == 'male' || req.user.gender == 'female'){
 				console.log(req.user.gender);
 				console.log("it goes to this location");
