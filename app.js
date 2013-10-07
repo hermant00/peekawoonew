@@ -185,6 +185,10 @@ app.get("/",function(req,res){
 	res.render('login');
 });
 
+app.get("/counter",function(req,res){
+	res.render('counter');
+});
+
 app.get("/error",function(req,res){
 	var removeme = req.user;
 	console.log("+++ removing error +++")
@@ -288,9 +292,16 @@ app.get('/loading',function(req,res){
 			if(req.user._json.gender){
 				req.user.gender = req.user._json.gender;
 			}
+			if(req.query.codename){
+				req.user.codename = req.query.codename;
+			}
+			if(req.user.codename){
+				req.user.codename = req.user.codename
+			}
 			if(req.user.gender == 'male' || req.user.gender == 'female'){
 				console.log(req.user.gender);
 				console.log("it goes to this location");
+				//req.user.codename = req.query.codename || req.user.codename;
 				res.render('loading',{user: req.user});
 			}else{
 				console.log("null goes to this location");
@@ -303,11 +314,11 @@ app.get('/loading',function(req,res){
 							console.log(locateGen);
 							if(locateGen >= 0){
 								req.user.gender = 'male';
-								req.user.codename = req.query.codename || req.user.codename;
+								//req.user.codename = req.query.codename || req.user.codename;
 								res.render('loading',{user: req.user});
 							}else{
 								req.user.gender = 'female';
-								req.user.codename = req.query.codename || req.user.codename;
+								//req.user.codename = req.query.codename || req.user.codename;
 								res.render('loading',{user: req.user});
 							}
 						}
@@ -329,7 +340,7 @@ app.get('/ranking',function(req,res){
 
 	var finishedRequest = function(){
 		if(user.provider == 'twitter'){
-			client.keys('*-'+user.id,function(err,value){
+			client.keys('*ale-'+user.id,function(err,value){
 				if(value){
 					if(value[0].length > 0){
 						var errorGen = value[0].search('female-');
@@ -585,15 +596,41 @@ app.io.sockets.on('connection',function(socket){
 	console.log("xxX pushing socket.id Xxx");
 	var userx = socket.handshake.peekawoo.user;
 	var usery = socket.handshake.peekawoo.sessionid;
-	if(userx.gender){
-		client.persist(userx.gender+'-'+userx.id);
+	if(userx != undefined){
+		if(userx.gender != undefined){
+			client.persist(userx.gender+'-'+userx.id);
+		}
 	}
 	console.log("xxXX Normal Data came here XXxx");
 	console.log(haveData);
 	console.log(myArray);
+	
+	app.io.route('enter',function(){
+			console.log("location url requesting in socket");
+			console.log(socket);
+		client.keys('*ale-*',function(err,list){
+			console.log("content of query for user count");
+			console.log(list);
+			if(list){
+				if(list.length > 0){
+					countUserInside = list.length;
+				}
+				else{
+					countUserInside = 0;
+				}
+				console.log(countUserInside);
+				app.io.broadcast('listusers',countUserInside);
+			}
+		});
+	});
+	
 	socket.on('disconnect',function(){
 		console.log("xxxxxxxxx disconnecting active client xxxxxxxx");
-		client.expire(userx.gender+'-'+userx.id,60);
+		if(userx != undefined){
+			if(userx.gender != undefined){
+				client.expire(userx.gender+'-'+userx.id,60);
+			}
+		}
 	});
 
 	console.log("===================");
@@ -646,10 +683,11 @@ app.io.sockets.on('connection',function(socket){
 		console.log("+++++removing gender+++++");
 		delete removegender.codename;
 		//console.log(removegender);
-		client.srem("visitor:"+removegender.gender,JSON.stringify(removegender));
+		//client.srem("visitor:"+removegender.gender,JSON.stringify(removegender));
+		client.del(removegender.gender+'-'+removegender.id,JSON.stringify(removegender));
 		client.del("chatted:"+removegender.id);
 		client.del("last:"+removegender.id);
-		client.del(removeroom.name);
+		//client.del(removeroom.name);
 		console.log("@@@@@ D O N E  R E M O V I N G @@@@@");
 	});
 	

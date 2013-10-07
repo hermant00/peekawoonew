@@ -1842,3 +1842,100 @@ input.ranking-email[type="email"] {
    border-top-color: #d99623;
    background: #d99623;
    }
+   
+body.counter-page {
+	background-color: transparent;
+}
+.timerDisplay {
+    border:0px solid #fff;
+    color: #584F4F;
+    display: block;
+    font-family: Helvetica;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 0;
+    margin-bottom: 0;
+    position: relative;
+    text-align: center;
+    width: 44px;
+}
+
+.textDisplay {
+    border:0px solid #fff;
+    color: red;
+    display: block;
+    font-family: Helvetica;
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 0;
+    margin-bottom: 0;
+    position: relative;
+    text-align: center;
+    width: 46px;
+}
+
+.textDisplay2 {
+    border:0px solid #fff;
+    color: #584F4F;
+    display: block;
+    font-family: Helvetica;
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 0;
+    margin-bottom: 0;
+    position: relative;
+    text-align: center;
+    width: 34px;
+}
+.moveSpan {
+    border: 0px solid #584F4F;
+    border-radius: 25px;
+    float: right;
+    margin-right: 134px;
+    margin-top: 33px;
+    padding: 5px;
+    width: 200px;
+}
+
+.moveSpan2 {
+    border: 0px solid #584F4F;
+    border-radius: 25px;
+    height: 90px;
+    left: 0px;
+    padding: 5px;
+    margin-left: 0px;
+    margin-top: 0px;
+    position: fixed;
+    width: 191px;
+}
+.moveSpan3 {
+    border: 0px solid #584F4F;
+    border-radius: 25px;
+    padding: 5px;
+    margin-left: 0px;
+    margin-top: 0px;
+    position: fixed;
+    width: 150px;
+}
+
+.newSpanCon {
+	background-attachment: inherit;
+    background-clip: border-box;
+    background-image: url("/img/hc-theme/counterbgtransp.png");
+    background-repeat: no-repeat;
+    background-size: 190px 90px;
+    background-position: top top;
+    border: 0px solid #584F4F;
+    border-radius: 25px;
+    float: right;
+    height: 90px;
+    margin-right: 134px;
+    margin-top: 33px;
+    padding: 5px;
+    width: 200px;
+}
+
+.framePosition {
+	margin: 25px auto 0 15px;
+	height: 37px;
+}
