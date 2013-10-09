@@ -24,6 +24,7 @@ var rotationGame = 0;
 var cycle_turn = false;
 var app = express();
 var newuser = false;
+var newuserCount = 0;
 app.http().io();
 //var countDownBoolean = false;
 var topic;
@@ -389,7 +390,7 @@ app.get('/ranking',function(req,res){
 							console.log(like);
 							if(JSON.parse(like).id == req.user.id){
 								console.log("xxXXxx RESULT OF LIKE xxXXxx");
-								finalLikes.push(datas);
+								finalLikes.push(data);
 							}
 						});
 					} 
@@ -839,6 +840,7 @@ app.io.sockets.on('connection',function(socket){
 				console.log(result.checkIfExist);
 				console.log("xxXXxx IM NEW HERE xxXXxx");
 				newuser = true;
+				newuserCount += 1;
 			}
 			else{
 				console.log("xxXXxx IM ALREADY HERE BEFORE xxXXxx");
@@ -850,8 +852,9 @@ app.io.sockets.on('connection',function(socket){
 			if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
 				console.log("xxXXxx NEWUSER Result xxXXxx");
 				console.log(newuser);
-				if(newuser){
+				if(newuser || newuserCount > 0){
 					if(!game_lock){
+						newuserCount = 0;
 						game_lock = true;
 						console.log("starting game in 30 sec");
 						setTimeout(function(){
@@ -1099,14 +1102,14 @@ start_chat = function(vf,vm,cflist,cmlist,cycle){
 										console.log("before female remove");
 										console.log(vfx);
 										console.log(femaleList);
-										var removeInListFemale = femaleList.indexOf(JSON.stringify(vfx));
+										var removeInListFemale = femaleList.indexOf('female'+vfx.id);
 										femaleList.splice(removeInListFemale,1);
 										console.log("after removing femaleList");
 										console.log(femaleList);
 										console.log("before male remove");
 										console.log(pvmx);
 										console.log(maleList);
-										var removeInListMale  = maleList.indexOf(JSON.stringify(pvmx));
+										var removeInListMale  = maleList.indexOf('male'+pvmx.id);
 										maleList.splice(removeInListMale,1);
 										console.log("after removing maleList");
 										console.log(maleList);
@@ -1182,14 +1185,14 @@ start_chat = function(vf,vm,cflist,cmlist,cycle){
 												console.log("before female remove");
 												console.log(vfx);
 												console.log(femaleList);
-												var removeInListFemale = femaleList.indexOf(JSON.stringify(vfx));
+												var removeInListFemale = femaleList.indexOf('female'+vfx.id);
 												femaleList.splice(removeInListFemale,1);
 												console.log("after removing femaleList");
 												console.log(femaleList);
 												console.log("before male remove");
 												console.log(pvmx);
 												console.log(maleList);
-												var removeInListMale  = maleList.indexOf(JSON.stringify(pvmx));
+												var removeInListMale  = maleList.indexOf('male'+pvmx.id);
 												maleList.splice(removeInListMale,1);
 												console.log("after removing maleList");
 												console.log(maleList);
@@ -1245,7 +1248,8 @@ start_chat = function(vf,vm,cflist,cmlist,cycle){
 						}
 					}
 				}
-				if(newuser == false){
+				//if(newuser == false){
+				if(newuserCount <= 0){
 					if(cycle < countCycle){
 						console.log("checking rotationTurn if there's a users chatting");
 						console.log(rotationTurn);
